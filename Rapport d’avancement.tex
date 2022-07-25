@@ -44,12 +44,12 @@
 \usepackage[
 %	style = numeric,
 %	style=ieee, %DOI yes, repeating author names -
-	style=nature, % no DOI
+%	style=nature, % no DOI
 %	style=nejm, % DOI, tight
 %	style=science, % no DOI, no article names
 %	style=apa, % DOI yes, no numbers
 %	style=mla, % DOI yes, no numbers, repeating author names - 
-%	style=phys, %DOI hidden, 
+	style=phys, %DOI hidden, 
 	maxnames=99,
 	giveninits=true,
 	isbn=true,
@@ -146,9 +146,28 @@ Belgian Science Policy Office (BELSPO), 617 SeismoStorm project
 Exploitation of historical analog seismological records by image processing and machine learning
 
 \subsection{Research focus}
-The proposed PhD thesis is focused on seismic data processing using machine learning tools.
+My PhD thesis is focused on processing of paper-based scanned seismograms using machine learning (ML) tools. Seismograms are the key data source in computational geophysics and seismology. Historical seismograms recorded in \nth{20} century form valuable data pool to evaluate past ground motions and seismicity of the Earth. However, such data mostly remain as old papers or in a raster format (scanned images), which should be vectorised to enable reuse. At the same time, manual vectorisation is a highly time‐consuming and cumbersome work, prone to human-induced errors, which often leads to misclassification of seismic traces. To address these limitations, we developed the Python-based algorithm of automatic vectorisation of the seismograms. 
 
 \subsection{Research questions}
+The research questions that we address in my PhD thesis include the following ones:
+\begin{enumerate}
+    \item What are the efficient ML methods for automatic vectorising of seismograms? 
+    \item Which libraries and embedded algorithms of Python language can be applied for automatic vectorisation ?
+    \item How to assess and interpret signals using seismic data in a semi-automated regime? 
+    \item How to effectively process and organise massive datasets containing large amounts of seismograms ?
+\end{enumerate}
+
+\subsection{Research problem} 
+
+The research problem consists in developing effective methods for vectorisation of seismograms. Seismograms are the key source of information in many geophysical applications. They are applied in many Earth science domains, such as earthquake modelling \cite{Kameda}, risk assessment \cite{Frankel,Panakkat}, civil engineering \cite{Savvaidis}, soil studies \cite{Papadakis}, geological simulations on rock and mineral physics, porosity and rheology \cite{Singhetal2020,DiMartino}. The analysis of the historical seismograms can also be used for reconstructions of the past seismicity of the Earth, retrospective data modelling, earthquake hazard prediction and risk assessment \cite{Zhuetal2021}.  
+
+There are existing software for digitising seismograms. For instance, Bogiatzis and Ishii developed the \emph{DigitSeis} \cite{Bogiatzis} aimed to classify features on seismograms, discriminating noise and generating time series to assign timing. Pintore et al. \cite{Pintoreetal2005} developed the \emph{Teseo} package where curves are recognised using colour contrast, approximated and vectorised. However, these solutions have technical limitations and drawbacks. 
+
+Namely, the success in vectorising seismograms by traditional software requires high quality images as input data. Ideally, they should have a distinct colour on the paper, contrasting and clearly recognised lines, no defects and faults, blurs and spots, distinguishable line width and continuity, identical time gaps or marks and line styles (curvature, repetitive chains of segments). In case of a perfect image, using such tools may lead to the acceptable outputs. However, in reality old scanned images are almost often imperfect and need using machine learning algorithm for an automatic vectorisation that could ignore the imperfectness of the old image. 
+
+In contrast, a ML-based algorithm can vectorise blurred or imperfect images, that is, those that contain spots and stains, where manual vectorising fails. Besides the questions of paper quality, processing the seismograms involves analysis of their amplitude, record time and signals source, originating from horizontal or vertical components. Therefore, it becomes a cumbersome task to vectorise images using traditional software. Automated workflow outperforms such methods by recognising features contained in a specific format of seismograms using computer vision and ML algorithms. This is possible using raster-to-vector (R2V) digitising methods.
+
+Many R2V methods have been proposed recently for optimisation of the vectorisation algorithms. Some of them employ ML techniques for improving the accuracy and accelerating the speed of vectorising \cite{SilvaCoira,Mineter,Tafoya,Doucette}. Along with the progress in programming, such methods gradually improved and resulted in a variety of the developed algorithms of vectorisation, for instance, threshold morphology \cite{Janssen1997}, real-time line extraction  \cite{Pferd,FULFORD198165}, topological analysis \cite{GROSS1995370}, approximation \cite{StanberryBesag,WallDanielsson}, 3D reconstruction \cite{Ceylan}. More examples of R2V algorithms include recognising the lines and discriminating them from the white/light background by line thinning, finding edges and neighbouring nodes \cite{Suzuki}, contrasting line width and smoothing shapes \cite{BaoFu}, iterative line optimisation and segmentation by CNN \cite{Inoue}, layering image and segmenting skeletons \cite{Hilaire}, extracting contours by simplification \cite{San,Chenetal2006}. 
 
 \subsection{Methodology}
 During the \nth{1} thesis year (2021/2022) we developed the approach of Python to a vectorisation of seismograms, which included trace line thinning, thresholding and detecting the time gaps to automatically recognise seismic traces on the images. A dataset of bitmap images containing scanned seismograms was processed by me using the code written on Python language by Prof. Dr. O. Debeir. The methods included automatic vectorising and converting the seismogram images from raster to vector format (R2V), detecting traces and identifying time gap intervals automatically. 
@@ -184,17 +203,17 @@ I used this workflow for processing large dataset containing seismograms with ai
 
 \subsection{Data processing}
 
-\subsubsection{Data formatting}
-Data processing was performed during winter 2021 (November/December 2021). We processed data scanning (performed at ROB) and stored them in digital bitmap format. The images were scanned with a high resolution (600 dpi) and A0 format using a large-format scanning device HD Ultra X Series (36'', 42'')/HD Ultra X ScanStation. The images were then converted into bitmap 0/1 (white/black) and saved as files in graphical bitmap formats: TIFF, JPG and PNG. Most of the data were stored in TIFF format which present a matrix of 2D arrays of pixels assigned to a value in a gray scale. The files were stored with metadata summarised for our paper which is in progress of \emph{Scientific Reports} journal (planned). The images were stored with a resolution of 300 dpi, ca. 350-400 MB size each, in 256 B/W monochrome scales. We also performed visual data analysis and inspection: the records from the Galitzine seismometer are monochrome, while those of Wiecherts are in colour (ivory background). The dataset included 145 images of the analogue seismograms in a raster format. 
- 
- \subsubsection{Data organising in Cytomine}
-During December 2021 and January 2022 we performed data processing in the Cytomine workspace and editing system for interactive data storage and management. The files were uploaded in Cytomine (\href{https://cytomine.com/}{Cytomine}). where we kept and processed images using the following functionality: organising and navigating the data, adding metadata and annotations, visualising and analysing the images, basic image manipulations (rapid view, zooming and rotating). 
+\subsubsection{Data scanning and formatting}
+Data processing was performed during winter 2021 (October/December 2021). We processed data scanning (performed at ROB) and stored them in digital bitmap format. The images were scanned with a high resolution (600 dpi) and A0 format using a large-format scanning device HD Ultra X Series (36'', 42'')/HD Ultra X ScanStation. The seismograms were recorded by the Galitzine seismometer, an electromagnetic instrument developed in 1910 to record a single component (horizontal or vertical) of ground motions. The data were recorded by the drum of the seismometer and stored in boxes in a storage space of the ROB and reflect the seismicity of the Earth. 
 
-\subsubsection{Data management in a workspace}
-The technical details of the images were recored in metadata and included information regarding the resolution, size, perimeter and area in pixels. As a workspace, Cytomine provides storage place for a large dataset. We uploaded and organised 145 files, each ca. 300-400 MB of size. 
+The images were then converted into bitmap 0/1 (white/black) and saved as files in graphical bitmap formats: TIFF, JPG and PNG. Most of the data were stored in TIFF format which present a matrix of 2D arrays of pixels assigned to a value in a gray scale. The files were stored with metadata summarised for our paper which is in progress of \emph{Scientific Reports} journal (planned). The images were stored with a resolution of 300 dpi, ca. 350-400 MB size each, in 256 B/W monochrome scales. We also performed visual data analysis and inspection: the records from the Galitzine seismometer are monochrome, while those of Wiecherts are in colour (ivory background). The dataset included 145 images of the analogue seismograms in a raster format. 
+ 
+ \subsubsection{Data management and organisation}
+During December 2021 and January 2022 we performed data processing in the Cytomine workspace and editing system for interactive data storage and management. The files were uploaded in Cytomine (\href{https://cytomine.com/}{Cytomine}). where we kept and processed images using the following functionality: organising and navigating the data, adding metadata and annotations, visualising and analysing the images, basic image manipulations (rapid view, zooming and rotating). The technical details of the images were recored in metadata and included information regarding the resolution, size, perimeter and area in pixels. As a workspace, Cytomine provides storage place for a large dataset. We uploaded and organised 145 files, each ca. 300-400 MB of size. 
 
 \subsection{Progress}
-During the \nth{1} thesis year (2021/2022) we developed and tested the original Python code to fully automate vectorisation of the scanned old seismograms. To this end we used Python programming language for generating algorithms of image processing and machine learning (ML) techniques for seismic trace discrimination. To test this code we used archived data from the Royal Observatory of Belgium, Uccle seismic station, scanned as high‐resolution images (over 100 high-resolution images). The seismograms were recorded by the Galitzine seismograph in 1954. Data management was performed using the Cytomine workspace. 
+During the \nth{1} thesis year (2021/2022) we developed and tested the original programming code to fully automate vectorisation of the scanned old seismograms. To this end, we used Python language for generating algorithm of image processing and ML techniques for discrimination of seismic trace. To test this code, we used archived dataset obtained from the Royal Observatory of Belgium, Uccle seismic station, scanned as high‐resolution images (over 100 high-resolution files). These seismograms were recorded by the Galitzine seismograph in 1954. 
+The data management was performed using the Cytomine workspace. 
 
 Thus, during the \nth{1} thesis year (2021/2022) we performed the following activities: 
 \begin{enumerate}
@@ -210,16 +229,16 @@ Thus, during the \nth{1} thesis year (2021/2022) we performed the following acti
 	The workflow that we tested during my \nth{1} thesis year (2021/2022) demonstrated high potential of using Python programming language for automated image processing in seismology and applied geophysics. Thus, the advantages of the developed algorithm include high speed and automation of data processing, accuracy and robustness of the vectorisation results.
 
 \subsection{Achieved results}
-During the academic year 2021/2022 I processed the dataset containing seismic records from Uccle seismic station of the Royal Observatory of Belgium (ROB). The dataset included over 100 scanned images of archived seismograms recorded in 1954. The data coverage period is from 1 January 1954 to 12 March 1954. I used the algorithm of Python written by Prof. Dr. O. Debeir for data processing, vectorising and plotting. These seismograms reflect the ground motions recorded by the Galitzine seismometer, an electromagnetic instrument developed in 1910 to record a single component (horizontal or vertical) of ground motions. The data were recorded by the drum of the seismometer and stored in boxes in a storage space of the ROB and reflect the seismicity of the Earth. 
+During the academic year 2021/2022 I processed the dataset containing seismic records from Uccle seismic station of the Royal Observatory of Belgium (ROB). The dataset included over 100 scanned images of archived seismograms recorded in 1954. The data coverage period is from 1 January 1954 to 12 March 1954. For data vectorisation, processing and plotting I used the algorithm written on Python by Prof. Dr. O. Debeir. Vectorised seismograms reflect the ground motions, so we plan to proceed with geophysical evaluation of the data values.
 
 \subsection{Empirical and/or theoretical approaches}
-In contrast to the existing traditional solutions, novel algorithm presented several advantages. First, it is able to vectorise lines in both vertically and horizontally oriented modes. Besides, the algorithm is able to identify trace segments and time intervals on the images using buffers in an automated mode. Finally, the vectorising workflow has a higher accuracy and speed of data processing compared to the state-of-the-art software. 
+In contrast to the existing traditional solutions (we compared the novel code with the performance of DigitSeis software), our algorithm presented several advantages. First, it enable to vectorise lines in both vertical and horizontal oriented modes. Besides, the algorithm empirically identifies trace segments and time intervals on the images using buffers in an automated mode. Finally, the vectorising workflow has a higher accuracy and speed of data processing compared to the state-of-the-art (DigitSeis) software. 
 
-High vectorising precision is achieved due to the algorithm based on the recognition of pixels' colour. This enabled to accurately discriminate traces, ignore stained background and maintain geometric shape and topology of seismic lines. Novel algorithm performed vectorising of each tile in 10 seconds and processing of seismograms oriented in both vertical and horizontal directions, which proved a high speed and effectiveness. 
+High vectorising precision is achieved due to the theoretical approach of algorithm, which based on the recognition of pixels' colour. This enabled to accurately discriminate traces, ignore stained background and maintain geometric shape and topology of seismic lines. Novel algorithm performed vectorising of each tile in 10 seconds and processing of seismograms oriented in both vertical and horizontal directions, which proved a high speed and effectiveness. 
 
 \section{Work prospects for the \nth{2} year of the thesis}
 \begin{itemize}
-	\item During the next academic year (2022/2023) We plan to publish our results in \href{https://www.nature.com/srep/}{Scientific Reports} journal from the Nature group. 
+	\item During the next academic year (2022/2023) we plan to publish our results in \href{https://www.nature.com/srep/}{Scientific Reports} journal from the Nature group. 
 	\item We plan to process more datasets including other years and study regions with a collaboration of the Spanish and German data centres on seismology and geophysics. 
 \end{itemize}
 
