@@ -83,8 +83,7 @@
 \color{darkblue}
 \large{\textbf{Rapport d’avancement de la thèse de doctorat \\ by Polina LEMENKOVA}} \\
 \color{black}
-\large{1ère année de thèse \\\emph{Doctorat en Sciences de l'ing\'{e}nieur et technologie}\\
-Ann\'{e}e acad\'{e}mique 2021-2022}
+\large{1ère année de thèse (ann\'{e}e acad\'{e}mique 2021-2022) \\\emph{Doctorat en Sciences de l'ing\'{e}nieur et technologie}}
  
 \vspace{2cm}
 
@@ -121,7 +120,7 @@ Mehrdad TERATANI (Universit\'{e} libre de Bruxelles, Prof. Dr.) \\
 \fancyhf{}
 \cfoot{\thepage}
 \rfoot{\footnotesize{Exploitation of historical analog seismological records...}}
-\lfoot{\footnotesize{PhD Thesis of Polina Lemenkova}}
+\lfoot{\footnotesize{Rapport d’avancement of Polina Lemenkova (2021/2022)}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -132,52 +131,107 @@ Mehrdad TERATANI (Universit\'{e} libre de Bruxelles, Prof. Dr.) \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Données administratives}
+\section{Administrative data}
 \subsection{Supervisors}
 Prof. Dr. Olivier DEBEIR (ULB) and Dr. Thomas LECOCQ (Royal Observatory of Belgium, Department of Seismology and Gravimetry, co-promoteur).
 
-\subsection{Date d’immatriculation}
+\subsection{Start Date}
 En cours depuis 12 October 2021.
 
 \subsection{Financement}
 Belgian Science Policy Office (BELSPO), 617 SeismoStorm project
 
-\section{Sujet de la thèse
-\subsection{Titre de la thèse}
+\section{Thesis topic}
+\subsection{Thesis title}
 Exploitation of historical analog seismological records by image processing and machine learning
 
-\subsection{Problematique}
+\subsection{Research focus}
 The proposed PhD thesis is focused on seismic data processing using machine learning tools.
 
-\subsubsection{Question de recherche}
+\subsection{Research questions}
 
-\subsubsection{Méthodologie (Matériel et Méthodes)}
+\subsection{Methodology}
+During the \nth{1} thesis year (2021/2022) we developed the approach of Python to a vectorisation of seismograms, which included trace line thinning, thresholding and detecting the time gaps to automatically recognise seismic traces on the images. A dataset of bitmap images containing scanned seismograms was processed by me using the code written on Python language by Prof. Dr. O. Debeir. The methods included automatic vectorising and converting the seismogram images from raster to vector format (R2V), detecting traces and identifying time gap intervals automatically. 
 
-\subsubsection{Objectif général}
+\subsection{Goals and Objectives}
+During the \nth{1} thesis year (2021/2022) we have addressed a problem of vectorising seismograms by presenting a novel algorithm for automated vectorising of seismograms based on Python programming. This algorithms enabled to digitise a massive archive dataset of seismograms automatically. 
 
-\subsubsection{Objectifs spécifiques}
+\section{Summary of the obtained results}
+I tested the code and performed data analysis using the novel Python-based algorithm written by Prof. Dr. O. Debeir. This algorithm enabled to automatically convert the bitmap graphics into a vector format using the R2V method which I processed at LISA. The Python was used because of its high computational functionality, logic and flexibility of syntax \cite{van1995python}. 
 
-\section{Travail réalisé (Résumé des résultats obtenus jusqu’à ce jour)}
+\subsection{Workflow}
+The general workflow of the work that we did during the \nth{1} thesis year (2021/2022) consists in large massif dataset processing. The workflow for this processing is outlined as followed: 
+ 
+\begin{enumerate}
+	\item \emph{Data organising --} The images were collected and organised in the Cytomine workspace. The dataset included 145 files with each ca. 300-400 MB, organised for viewing and analysis. The workload was divided and separated between the members of the SeismoStorm project. Thus, I uploaded raw data, Prof. Dr. O. Debeir performed metadata processing (ontology, generating time marks, general data management, etc). 	
+	\subitem \emph{Cytomine for data management -- } The Cytomine workspace and editing system was used as a storage place and management system for a large dataset.
+	\subitem \emph{Ontology classes in SeismoStorm -- } The ontology classes were generated using labeled features of objects on the images: seismic traces, time gaps with subclasses, trace segments, annotations, noise and defects, initial hour marks.
+	\subitem \emph{Annotating the objects -- } The features on the images and associate terms were identified, annotated and described. These included time gaps, handwritten remarks and seismic traces.	
+	\item \emph{Image capture -- } Raster images were grabbed by Python script using a path to the files located in the Cytomine. The images were fetched by the developed API enabling the access to the Cytomine, and stored in a working folder.	
+	\item \emph{Detection of the ROI -- } The threshold of ROI was detected at low resolution by identifying a region of the scan occupied by signal. This improved the time of computing and optimised the use of memory during image processing.  	
+	\item \emph{Tile processing -- } The ROI is then sliced into regular overlapping tiles. Tile size chosen is such that it fits easily into memory and is large enough to cover at least one and a half minute segment length, and the overlap is chosen to ensure that a minute segment is completely included in one tile. 	
+	\subitem \emph{Segmentation -- } The segmentation of the line is applied to each tile extracted from the ROI. The lines on the seismograms were thinned using the cycles of algorithm executed iteratively until only the skeleton of line remained. The following parameters were tested: number of pixels forming the line, radius of pixel's neighbourhood and threshold of the intensity of grey (level of colour in pixels considered or ignored).	
+	\subitem \emph{Edge detection -- } The edges of seismic traces (start and end points) were detected according to the seismogram structure: minute and hour time gaps made by the drum of the seismometer which signify the ends of the line segments. 
+	\subitem \emph{Vectorisation -- } Each tile on the image was digitised by an algorithm configured as a loop of code processing the image. This resulted in digitised segments visualised as vector lines on the seismograms, coloured randomly.  	
+	\item \emph{Line approximation --} The lines were interpolated as several short segments of splines, separated by the minute gaps between each segment. 	
+	\item \emph{Creating buffer zones for line tracking -- } The minute segments were traced and marked as parts constituting the hour on each seismogram. This resulted in a matrix of pixels stored in a memory of the program.	
+	\item \emph{Time labelling --} Time gaps were detected as hour and minute intervals regularly breaking the line.  Timing of hour marks was done using detected double gaps located closely to the first minute of the consecutive hour. Annotating the time intervals was done using minute and hour gaps by detecting repeated breaks of seismic traces.	
+	\item \emph{Corrections --} Validation of errors was performed by the double line vectorisation using the overlapping time periods. This was only necessary for the border regions where neighbouring tiles cross each other with a one-minute interval.	
+	\item \emph{Conversion and plotting --} The sequence of pixels forming the segments of vector lines was converted  into the vector format. The graphs of the vectorised lines were visualised using the Matplotlib library.
+\end{enumerate}
 
-\subsection{Déroulement des activités}
+I used this workflow for processing large dataset containing seismograms with aim to convert them from raster to vector format using novel Python-based algorithm. 
 
-\subsection{L’état d’avancement}
+\subsection{Data processing}
 
-\subsection{Les principaux résultats acquis}
+\subsubsection{Data formatting}
+Data processing was performed during winter 2021 (November/December 2021). We processed data scanning (performed at ROB) and stored them in digital bitmap format. The images were scanned with a high resolution (600 dpi) and A0 format using a large-format scanning device HD Ultra X Series (36'', 42'')/HD Ultra X ScanStation. The images were then converted into bitmap 0/1 (white/black) and saved as files in graphical bitmap formats: TIFF, JPG and PNG. Most of the data were stored in TIFF format which present a matrix of 2D arrays of pixels assigned to a value in a gray scale. The files were stored with metadata summarised for our paper which is in progress of \emph{Scientific Reports} journal (planned). The images were stored with a resolution of 300 dpi, ca. 350-400 MB size each, in 256 B/W monochrome scales. We also performed visual data analysis and inspection: the records from the Galitzine seismometer are monochrome, while those of Wiecherts are in colour (ivory background). The dataset included 145 images of the analogue seismograms in a raster format. 
+ 
+ \subsubsection{Data organising in Cytomine}
+During December 2021 and January 2022 we performed data processing in the Cytomine workspace and editing system for interactive data storage and management. The files were uploaded in Cytomine (\href{https://cytomine.com/}{Cytomine}). where we kept and processed images using the following functionality: organising and navigating the data, adding metadata and annotations, visualising and analysing the images, basic image manipulations (rapid view, zooming and rotating). 
 
-\subsection{Les démarches empiriques ou théoriques}
+\subsubsection{Data management in a workspace}
+The technical details of the images were recored in metadata and included information regarding the resolution, size, perimeter and area in pixels. As a workspace, Cytomine provides storage place for a large dataset. We uploaded and organised 145 files, each ca. 300-400 MB of size. 
 
-\section{Perspectives de travail pour la 2nde année de thèse}
+\subsection{Progress}
+During the \nth{1} thesis year (2021/2022) we developed and tested the original Python code to fully automate vectorisation of the scanned old seismograms. To this end we used Python programming language for generating algorithms of image processing and machine learning (ML) techniques for seismic trace discrimination. To test this code we used archived data from the Royal Observatory of Belgium, Uccle seismic station, scanned as high‐resolution images (over 100 high-resolution images). The seismograms were recorded by the Galitzine seismograph in 1954. Data management was performed using the Cytomine workspace. 
 
-\section{Modules de formation ECTS }
-Modules de formation du Programme de doctorat en sciences de l'ingénieur ULB auxquelles vous avez participé jusqu’ici: 5 ECTS for the Course LANG-B909, 60 h, niveau AVANCÉ 2, B2.2.
+Thus, during the \nth{1} thesis year (2021/2022) we performed the following activities: 
+\begin{enumerate}
+	\item scanned big archive of paper-based old seismic data in ROB (scanning by R. de Plaen);
+	\item adjusted principles of using Cytomine workspace for geophysical data processing;
+	\item developed algorithm for vectorising seismograms using Python programming language and advanced ML methods of data analysis (code author: Prof. Dr. O. Debeir);
+	\item tested functionality of the code, discussed the flaws, performed the debugging for improving the code;
+	\item validated and analysed the results of vectorisation using this code and compared them with the traditional methods of seismogram processing (DigitSeis software);
+	\item performed quality control through statistical analysis to evaluate the validity of the vectorised traces. 
+	\item discussed case example of the workflow and planned improvements in the code for a better vectorisation;
+	\item checked the efficiency (speed of 10 sec for each seismogram) of data processing.
+\end{enumerate}
+	The workflow that we tested during my \nth{1} thesis year (2021/2022) demonstrated high potential of using Python programming language for automated image processing in seismology and applied geophysics. Thus, the advantages of the developed algorithm include high speed and automation of data processing, accuracy and robustness of the vectorisation results.
 
-\section{Publications résultant des recherches effectuées:}
-Conference paper accepted at 3ECEES (The Third European Conference on Earthquake Engineering and Seismology), https://3ecees.ro/ 
+\subsection{Achieved results}
+During the academic year 2021/2022 I processed the dataset containing seismic records from Uccle seismic station of the Royal Observatory of Belgium (ROB). The dataset included over 100 scanned images of archived seismograms recorded in 1954. The data coverage period is from 1 January 1954 to 12 March 1954. I used the algorithm of Python written by Prof. Dr. O. Debeir for data processing, vectorising and plotting. These seismograms reflect the ground motions recorded by the Galitzine seismometer, an electromagnetic instrument developed in 1910 to record a single component (horizontal or vertical) of ground motions. The data were recorded by the drum of the seismometer and stored in boxes in a storage space of the ROB and reflect the seismicity of the Earth. 
+
+\subsection{Empirical and/or theoretical approaches}
+In contrast to the existing traditional solutions, novel algorithm presented several advantages. First, it is able to vectorise lines in both vertically and horizontally oriented modes. Besides, the algorithm is able to identify trace segments and time intervals on the images using buffers in an automated mode. Finally, the vectorising workflow has a higher accuracy and speed of data processing compared to the state-of-the-art software. 
+
+High vectorising precision is achieved due to the algorithm based on the recognition of pixels' colour. This enabled to accurately discriminate traces, ignore stained background and maintain geometric shape and topology of seismic lines. Novel algorithm performed vectorising of each tile in 10 seconds and processing of seismograms oriented in both vertical and horizontal directions, which proved a high speed and effectiveness. 
+
+\section{Work prospects for the \nth{2} year of the thesis}
+\begin{itemize}
+	\item During the next academic year (2022/2023) We plan to publish our results in \href{https://www.nature.com/srep/}{Scientific Reports} journal from the Nature group. 
+	\item We plan to process more datasets including other years and study regions with a collaboration of the Spanish and German data centres on seismology and geophysics. 
+\end{itemize}
+
+\section{Modules ECTS}
+Modules de formation du Programme de doctorat en sciences de l'ingénieur ULB: 5 ECTS for the Course LANG-B909, 60 h, niveau AVANC\'{E} 2, B2.2.
+
+\section{Publications}
+Conference paper accepted at 3ECEES (The Third European Conference on Earthquake Engineering and Seismology), \href{https://3ecees.ro/}{https://3ecees.ro/}.
 Title: « Extracting microseismic ground motion from legacy seismograms ».
-Authors: Olivier Debeir 1, Polina Lemenkova1, Raphael S. M. De Plaen2, and Thomas Lecocq 2 
-Affiliations:1 Université Libre de Bruxelles, École polytechnique de Bruxelles, Laboratory of Image Synthesis and Analysis. Campus de Solbosch, Av. Franklin D. Roosevelt 50, Brussels, BE-1000, Belgium. 2 Royal Observatory of Belgium, Seismology & Gravimetry (OD2). Av. Circulaire 3, Uccle, BE-1180, Belgium
-Location: Palace of the Parliament – Bucharest International Conference Centre Bucharest, Bucharest, Romania.   
+Authors: Olivier Debeir 1, Polina Lemenkova1, Raphael S. M. De Plaen 2, and Thomas Lecocq 2 
+Affiliations:1 Université Libre de Bruxelles, École polytechnique de Bruxelles, Laboratory of Image Synthesis and Analysis. Campus de Solbosch, Av. Franklin D. Roosevelt 50, Brussels, BE-1000, Belgium. 2 Royal Observatory of Belgium, Seismology \& Gravimetry (OD2). Av. Circulaire 3, Uccle, BE-1180, Belgium
+Location: Palace of the Parliament -- Bucharest International Conference Centre Bucharest, Bucharest, Romania.   
 Organizers: The National Institute for Earth Physics (INFP) and Technical University of Civil Engineering Bucharest (UTCB).
 Date: September 4-9, 2022.                                
 Abstract: Before digital recordings became available in the 1970s, the ground motion was recorded using ink on white paper, scratching black-smoked paper, or light on photographic paper. While those analog seismic records offer unique continuous observations from the last century, most of them are now stacked and archived in boxes and potentially exposed to physical decay and permanent loss. To preserve those records and ultimately subject them to modern methods of analysis, it is time-sensitive to scan and digitize them. Here, we worked on a method for automatic digitization of paper seismograms using image processing and machine learning to extract microseismic ground-motion periods and amplitudes. We implemented the method on legacy data recorded at the Royal Observatory of Belgium to extract power spectral densities for major storms during the last century, which are compared with modeled microseisms levels computed using a numerical ocean wave model. This further shows how digitizing analog seismograms does not only preserve the scientific legacy but also makes new research possible by bringing analog data to the digital age. Topics: earthquake engineering engineering seismology earthquake disaster mitigation and management seismology and seismotectonics.
@@ -186,258 +240,6 @@ Abstract: Before digital recordings became available in the 1970s, the ground mo
 
 \subsection{Contribution de l'étude}
 
-
-\newpage
-\section{Introduction}\label{chp:1}
-\rhead{Background}
-\lhead{Introduction}
-
-\subsection{Background}
-Geophysical factors causing the seismicity of the Earth include a complex combination of factors (tectonics, geology, gravity) that results in the signals received by the seismographers. Specifically, the seismicity of the Earth represent a physical phenomena resulting from inner tectonic processes connected to energy accumulation and release. The fundamental concepts of the Earth’s physics are reflected in the movements on the surface that have different intensity of the vibrations, caused by the fluctuations of energy. In the geodynamic sense, seismicity is the result of self-organization of the Earth, responding to the internal processes of the lithosphere movements by the released energy. Measuring seismic signals of the Earth by seismometers enables to accurately evaluate the ground noises and shaking of the Earth’s interior, associated with earthquakes of various magnitude.
-
-The seismicity of the Earth represent a physical phenomena resulting from inner tectonic processes connected to energy accumulation and release \cite{GutenbergRichter}. The fundamental concepts of the Earth's physics are reflected in the movements on the surface that have different intensity of the vibrations, caused by the fluctuations of energy \cite{Shearer2019}. In the geodynamic sense, seismicity is the result of self-organisation of the Earth, responding to the internal processes of the lithosphere movements by the released energy \cite{UdiasBuforn2017}. Measuring seismic signals of the Earth by seismometers enables to evaluate ground noises and shaking of the Earth’s interior, associated with earthquakes of various magnitude. 
-
-\subsection{Importance}
-The historical datasets from previous periods form a valuable database containing archived data on seismicity of the Earth that should be used for practical scientific purposes. The importance of these old datasets for geophysics has been discussed in relevant works and can be summarised as follows.
-
-\begin{itemize}
-    \item First, old seismograms present a key source of information on seismicity of the Earth’s interior. It is a ground basis for fundamental pure science of the Earth’s physics.
-    \item Besides, retrospective analysis of the old seismograms enables to model earthquake cycle as a continuous process and to get a better insights into the physics of the earthquakes.
-    \item Moreover, digitizing, visualizing and interpreting historical seismograms using advanced tools and software enables to propose an improved interpretation of the geophysical data.
-    \item Finally, interpretation of the old seismograms provides information for the long-term prognosis of earthquakes. Predictive modelling of earthquakes is only possible based on the statistical analysis of historical data series on earthquakes’s locations and magnitude for assessment of probability.
-\end{itemize}
-
-The importance of the seismogram datasets can be illustrated by their practical application in relation to tectonics, geology and physics of the Earth. Specifically, the wide use of seismograms includes such fundamental domains as geophysics \cite{Kulhanek}, subsurface exploration, global and planetary tectonics \cite{Crampin}, \cite{Jackson2002}, risk assessment in civil engineering \cite{Pileckietal2017}, \cite{Kurzeja}, prediction of earthquakes and relative analysis (dynamic rupture, seismic tomography and wave forms) \cite{Amorese}, volcanology \cite{Pezzo}. Analysis of seismograms is based on the interpreting of observation datasets to quantify seismic sources: location, size, rupture history, travel time and wave polarization \cite{Ammon}. Seismic data processing involves a variety of approximation methods, e.g. Fourier analysis, or an artificial modelling of the synthetic generated data \cite{Rosenbaum1994}.
-
-For instance, earthquake-related hazards can be simulated by artificial Fortran-based stochastic time series of faults \cite{BeresnevAtkinson}. The evaluation of this method was further extended by \cite{NicknamEslamian} who generated artificial seismograms for modelling seismotectonic processes. These include, for instance, such aspects as fault length and width, analysis of sensitivity with varied epicenter locations and rupture processes showing the extent of slip of the Earth's crust, e.g. rupture velocity and shear wave velocity. Synthetic seismograms can furthermore point at the geological processes by analysis of seismic reflectors of stratigraphic data \cite{BrewMayer1998}. Besides geological domains, seismograms can be used in environmental studies to reveal the characteristics of seismic storms and their correlation with climate change and dynamic processes of the Earth \cite{Singh2021}, \cite{Toyokunietal2015}.
-
-Predictive modelling of seismograms for analysis of earthquake hazards is largely based on the observation seismology and retrieval of information from the digital seismograms \cite{Claerbout1992}. Uniformed, standardised, converted to digital format and accurately processed seismograms enable to explain the physical nature and repeatability of earthquakes based on the ground motion signals. However, the use of such information relies on our access to the large datasets of seismograms. Generating such data pools is only possible by accurate and standardised recording system using commonly accepted and approved instruments (seismometers and seismographers) that continues through years and centuries and regularly provides data for further processing \cite{UdiasBuforn2017}. 
-
-\subsection{Motivation}
-However, despite the value of old seismograms, the historical seismic archives might be lost, if not digitized and not converted into a digital form. Large amounts of vintage seismograms are stored on papers or magnetic tapes. For these data, no digital record remains and the seismic reflection data are only available as scanned TIFF images, printed on film or paper. This makes seismograms useless for the modern re-use, because geophysicists need first to have an access to these data, and then to read and interpret them for geophysical analysis. The need for advanced digitizing methods has emerged recently as an issue for processing data in streams due to the big data development, because of the increasing amount of data. We plan to use data available from the Royal Observatory of Belgium, Department of Seismology and Gravimetry.
-
-\subsection{Study Focus, Objectives and Goals}
-The main focus of this PhD thesis includes processing of seismograms obtained from Royal Observatory of Belgium, Department of Seismology and Gravimetry for automatic trace extraction and digitizing of data in large volumes. Specifically, we aimed at digitization of seismic signals in historic analog seismograms. Specific tasks include monitoring digitizing seismograms as scanned image files and extracting the time series that represents the seismic trace’s amplitude as a function of time. Thus, this PhD research will employ advanced data-driven ML approaches of seismic data processing aimed at recognition of scanned images, classification of signal strength and converting them into a digital format automatically.
-
-\subsection{Historical Background}
-The history of seismography undergone a long process of technical evolution \cite{DeweyByerly1979}. In general, the instruments used for seismic data recording reflect a constant development of technologies and a state-of-the-art in methods, which provide tools to measure ground motion, earthquake's magnitude, location and frequency \cite{DeweyByerly1979}. The systematic and precise operative observation of seismicity of the Earth began in the latter part of the \nth{19} century along with a progress in technology, development of new seismographs, and general advances in geophysical methods \cite{SchweitzerLee2003}. At this time, since 1880s seismologists started recording continuously and systematically the ground motion using seismographs \cite{SchweitzerLee2003}. From that period and up to 1960s the seismograms were recorded as analogue signals using technical abilities of the narrow-band, low-range instruments of those time \cite{Batlloetal2008}.
-
-During the first half of the \nth{20} century seismograms continued to be recorded in paper analog format \cite{Wangetal2014} or as magnetic tapes \cite{Anetal2015}. Starting with 1960s, the progress in seismography gradually continued along with the onset of computer era, development of microprocessors and advanced algorithms of geophysical data processing. Apart from advances in instrumental development, seismic data gradually increased in quantity systematically collected by seismic stations worldwide \cite{Engdahl2002}. An unprecedented initiative of global seismological network WWSSN was created in 1960s and generated a collection of high quality big seismic data \cite{OliverMurphy}, \cite{Ammon2010}. The uniformed seismic datasets of the WWSSN network were possible due to the principle of uniformity: each seismic station had identical technical equipment and a standard workflow for data calibration.
-
-Currently, seismograms are recorded and stored digitally in high-performance data centres using advanced algorithms of computation seismology \cite{Heiner}. The progress in computational seismology now enables numerical approximations of the seismic waves for modelling signals as complex 3D structures, using advanced mathematical solutions, such as Fourier series, Chebyshev pseudospectral methods, approximation of traces by Lagrange and Chebyshev polynomials \cite{Heiner}.
-
-However, the remaining historical datasets from previous periods form a valuable database containing archived data on seismicity of the Earth that should be used for practical scientific purposes \cite{Ambraseys1983}. The importance of these old datasets for geophysics has been discussed in relevant works \cite{Vogtetal1985}, \cite{TevesCosta1999}, \cite{Bono2007}, \cite{Okal}. Old seismograms present a key source of information regarding the seismicity of the Earth's interior up to the Middle Ages \cite{Alexandre1990a}, \cite{Alexandre1985}, \cite{Alexandre1990b}, which can be used for geophysical reconstructions  and past climate modelling. Besides, retrospective analysis of the old seismograms enables to model earthquake cycle as a continuous process and to get a better insights into the physics of the earthquakes. Finally, interpretation of the old seismograms provides information for the long-term prognosis. Predictive modelling of earthquakes is possible based on the statistical analysis of historical data series on earthquakes's locations and magnitude \cite{Kanamori1988}.
-
-The first attempts to digitise the analogue recordings of seismic events into numeric format started in 1960s. For instance, an \emph{ad hoc} algorithm of thinning the lines on a scanned seismogram and converting the image into a 0-1 digital matrix was developed by \cite{Jarosch1975}. Another study used a device initially used for weather maps and adjusted it for automatic converting seismic signals into a digital form, and plotting them using a cathode-ray tube display  \cite{AdamsAllen1961}. The progress of digitising methods of signals accelerated in 1980s (\cite{AspinallLatchman}, \cite{CrouseMatuschka1983}) and 1990s (\cite{NorlundGriffiths1993}, \cite{McGee1995}, \cite{Harjesetal1993}) along with rapid development of computer-based algorithms and advanced geophysical software. Digitising approaches has become more and more automated since 2000s, along with a rapid development of programming languages and advanced IT tools \cite{Bietal2016}, \cite{Ishiietal2015}, \cite{Schenke}, \cite{Wangetal2014}. 
- 
-In recent years, the use of automated digitisers of seismograms or accelerograms (recording the acceleration of the strong motion ground) instead of manual vectorisers has received attention for the effective data processing. These include automated recognition of noise \cite{CrouseMatuschka1983}, handling smooth and wigged traces using algorithms for tracing waves based on the pixels context \cite{Bietal2016}, synchronisation of time scale for the three motion components, handling scratches, distortions or line crossings in the image, adjusting rotated position \cite{Trifunacetal1999}, to mention a few. Other problems are caused by the recording methods of the old mechanical seismographs. For instance, these include a high velocity of stylus that does not affect the paper, clipping of amplitudes, low-contrast dark background on a smoked paper, damaged records due to the bad storage conditions \cite{Baskoutasetal2000}. Digitising seismograms in such a bad conditions can be a challenge or, at least, not a straightforward task.
-
-\subsection{Gap Identification}
-
-Current research has a significant gap between geophysical applications and the methodologies involved to processing seismograms from analog to digital format. Therefore, this PhD project aims to minimize this gap by developing advanced and appropriate ML methodologies for seismogram processing in a semi-automated regime using advanced tools and software. The existing approaches of vectorization of seismograms exist in industry. There are commercial products developed by companies who focus on scanning and digitizing paper-based seismograms. However, their products are commercial and have no open access. The methodologies utilized by these companies are mostly unpublished. In contrast, we plan to use and develop open tools and publish our results in journals. Besides the need for open access high-quality workflow for digitizing seismograms, the need of this research is also motivated by the amount of data (big seismic datasets available from Royal Observatory of Belgium, which require special tools for processing of these data). Besides, the developed methods will also propose a framework that will help geophysicists in earthquake risk monitoring, prognosis and management based on innovative seismogram data processing regime.
-
-\subsection{State-of-the-art}
-
-As a response to the arising needs for automatic, quick and accurate digitising and modelling of seismic data, various programs were developed due to the rapid growth of the programming and IT industry. Modern software for digitising seismograms are based on the principle of pattern recognition. For example, the Teseo software, developed by \cite{Pintoreetal2005}, traces raster files based on the piecewise cubic Bézier curves. This vectoriser handles the monochrome images by three methods: manual, automatic, and neural networks. A software program using C\# is presented by \cite{Wangetal2016} using algorithm of color scene recognition by Color Scene Filed Method. An interactive program using Matlab GUI was developed by \cite{XuXu} using an algorithm of inversion problem for a matrix of model parameters and the observed seismic data. 
-
-Another example of seismic software, the The SeisDig, was developed by Berkeley Seismological Laboratory under a copyright. It presents an interactive Matlab GUI based tool aimed at digitising scanned images, performing trace inspection, checking time conservation, recognising individual events, and inputing metadata as a header \cite{BromirskiChuang2003}. An innovative approach to the development of the seismic recorder is presented by \cite{Khanetal2012} who developed the DigiSeis software. The DigiSeis is aimed at digitizing seismic signals using a built-in PC sound card for processing seismic signals. It visualises the two channel seismic data in time and frequency, and enables to perform a time series analysis. A special attempt for automatic extracting of wave data from paper seismograms was presented by \cite{Liuetal2001} with a developed seismogram digitization and DB management system using Delphi3 based on the syntax of Pascal language. 
-
-\subsection{Practical Output}
-As a practical application of this PhD work, we plan to propose tools (a workflow for digitizing) for operative monitoring of seismograms by ML. It will enable identification of ground motion and earthquake signals and help improving the prognosis of possible hazards in seismic-prone areas.
-
-\subsection{Originality and Innovation}
-Currently, there are no integrated studies of seismic historical data processing with ML methods, specifically for scanned images and geophysical monitoring of data in large volumes. This PhD thesis is designed to fill in the existing lacuna by presenting a multi-disciplinary research. Specifically, we need to perform object classification in a semi-automated regime, and check the accuracy of classifications. This is particularly crucial for damaged images with spots, smudges, stains, and those containing noise or inaccuracies. Historical data are scanned and often corrupted through time. This requires special attention to recognition of these defects visible on seismograms. We plan to evaluate these effects from signals and digitize them into digital form.
-
-Besides, we plan to digitize the traces on seismograms and correct small, trace-specific issues on seismograms (gaps, specific issues with the digitization of a trace, digitization of overlapping traces removed in the classification phase) during the workflow. This PhD research consists of applications of ML to seismic data handling to fill the lacuna in the existing studies and combine computer science + geophysics. Thus we will be performing an interdisciplinary research that does not fall into a single specific discipline of science.
-
-\subsection{Research Problem}
-
-\subsection{Research Questions}
-
-Key research questions include the following ones:
-\begin{enumerate}
-    \item What are the best ML/DL approaches for automatic processing of seismograms? What would be an effective repetitive workflow?
-    \item How to assess and interpret signals using seismic data in a semi-automated regime? How does seismicity differ regionally in Uccle station area (time-series analysis)?
-    \item How to effectively process and model big datasets of seismograms (developing methodology of stream data processing)?
-\end{enumerate}
-
-\subsection{Benefits and Advantages}
-The benefits of the PhD project consist in an integrated methodology for digitising historical seismograms for further re-use in geophysical application using ML methods. These methods help to effectively, rapidly and accurately perform signal processing and classification and demonstrate dynamics of signals over time (using datasets since 1950s unto now). Using real-time big datasets of seismograms processed by ML will present a new data base for analysis of ground motion and seismicity of the Earth.
-
-\subsection{Hypothesis}
-
-The hypotheses of this research are summarised in the following statements: 
-
-\begin{enumerate}[i]
-  \item Seismic traces on seismograms can be automatically detected using machine learning / deep learning techniques and big datasets to digitise old scanned images for retrospective geophysical modelling.
-  \item Patterns of the seismic traces are detectable using automated classification systems on the raster TIFF images retrieved from seismic archives and converted to digital data using AI methods.
-  \item Historical seismograms are valuable information sources for precise geophysical monitoring and earthquake analysis using the past datasets.
-  \item Seismic signals response to the ground motion differ regionally in space and time in Brabant Massif, which can be detected using time-series analysis.
-  \item Seismic modelling analysed by ML methods can create a digital basis for earthquake system monitoring, aimed to contribute to a prognosis on seismicity of the Earth and estimate possible locations at risk (applicable to the seismically prone areas, e.g. southern Europe, South America etc).
-  \item Advanced methods of vectorising software and ML tools can be used for automatic recognition of seismic signals and analysis of earthquake strength and magnitude using smart techniques of signal processing.
-  \item ML/DL approaches can be used for automatic processing of archived seismic data aimed to support Earth geophysical monitoring system.
-\end{enumerate}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Materials and Methods}
-\rhead{Study Area}
-\lhead{Materials and Methods}
-
-\subsection{Study Area}
-The study processing was performed in Université Libre de Bruxelles, École polytechnique de Bruxelles, Belgum, based on the obtained from the archives of Royal Observatory of Belgium, Department of Seismology \& Gravimetry, Uccle seismic station (UCC), Fig. \ref{fig:1} (a). Established in 1899 by Eugène Lagrange, Uccle was the only seismic station in Belgium for the most of \nth{20} century. Afterwards seismic monitoring  gradually expanded and resulted in large seismic network system of Belgium with Uccle still being its important centre. 
-
-The seismograms have been received from Uccle station using the Galitzine seismometer, Fig. \ref{fig:1}. This type of seismographs is constructed using a following principle: a coil of wire is fixed to the pendulum which oscillates between the poles driven by the earthquake forces. The movement of coil between a strong magnet generate an electric induction current. The current is then being transferred to a sensitive galvanometer with signals registered photographically on the seismogram \cite{Neumann}. It is the \nth{1} electromagnetic instrument developed by B.B. Galitzine in 1910, designed to record a single component (horizontal or vertical) for earthquakes recording \cite{Wgg}. 
-
-\begin{figure}[H]
-     \centering
-	\begin{subfigure}[b]{0.45\textwidth}
-        		 \centering
-        			 \includegraphics[width=8.5cm]{images/Fig_01a.jpg}
-        		 \caption{Location of Uccle station on a topographic map of Belgium. Map source: authors.}
-     \end{subfigure}
-    \hfill 
-         \begin{subfigure}[b]{0.45\textwidth}
-      		\centering
-         		\includegraphics[width=5.5cm]{images/Fig_01b.jpg}
-         	\caption{Horizontal Galitzin seismometer located in Uccle seismic station. Image source: Royal Observatory of Belgium.}
-    \end{subfigure}
-     \caption{Study area and seismic instrument (Galitzin seismometer)} \label{fig:1}
-\end{figure}
-
-B.B. Galitzine reduced the sensitivity of the system by diverting a part of the current and thus improved the accuracy of the system. The special requirements for standard type of operation of these units include the following: (1) Damping the resistance to the galvanometer (2) Damping the seismometer pendulum through the cumulated effect of a magnetic damping device and the external resistance to the pendulum coil. Thus, the structure of the device is presented in Fig. \ref{fig:1} (b): the pendulum (at the front), consists of a mass suspended by the two wires. A coil is attached to the arm of the pendulum, which moves between the poles of a magnet (at the back), in which a current is being generated. These conditions are satisfied by the Galitzine system that includes a copper plate, fixed on the rod next to the coil, which oscillates in the field of a second magnet and allows for damping by Foucault current. Due to such effectiveness, the Galitzine seismometer is still being used for seismic measurements of Galitzine type \cite{ChakrabartyTandon}.
-
-\subsection{Approaches}
-A wide variety of software may be used for signal processing. Among them, we plan to apply both traditional software for seismic data processing (DigitSeis, from Harvard University, US) and the machine learning (ML) and deep learning (DL). ML/DL stand apart as presenting advanced methods of automatic image digitizing, segmentation, correction, pattern recognition and partition. Apart from the ML/DL techniques, the scripting GMT toolset will be used for illustrative geophysical mapping and visualization of study area (Belgium).
-
-\subsection{Multi-Disciplinary Approach}
-The multi-disciplinary aspects of this PhD consist of strong ties between the two disciplines: computer science (software tools and programming algorithms) and geophysics (seismology). Regional complexity of geophysical processes requires integrated multi-disciplinary approaches handling seismic data by ML techniques and advanced software. Applying ML to processing seismograms brings new possibilities in geophysical studies. The opportunities and challenges of ML and advanced tools for processing historical seismograms include accurate and rapid analysis of the scanned seismic images, improved classification of signals and geophysical data interpreting.
-
-\subsection{Technical challenges}
-With the advances of seismographers and seismic data acquisition, the amount of seismograms that can be used for this PhD purposes is increasing progressively and collected from Royal Observatory of Belgium, Uccle station. Utilizing and automated handling of these massive data using short update intervals for processing in geophysical predictive modelling remains a challenge that can be solved using ML and advanced software. This PhD research focused on the problem of digitizing of scanned reflection seismic data (seismograms), recorded and stored as images printed on paper as TIFFs, and convertim them into the digital readable conventional format. Technically we will develop a process for performing this task in a most effective and automated regime. The process of digitizing include many technical nuances that will be solved and optimized during this research.
-
-Besides, this study manages the problem of handling various noises during digitizing, such as wiggle trace data, where the waveform of the seismic trace is represented as a wiggled line on the image and teach the machine to ignore deviations and errors. The method will be a technical challenge of this PhD research. By applying a series of signal processing procedures using datasets from Uccle, Royal Observatory of Belgium, the timelines and baselines of the seismic traces will be detected on the binary images (TIFFs) generated by scanning the original archived data.
-
-\subsection{Challenge of big data}
-Over the recent decades, production of seismic data has been increasing continuously in volume, which is associated with an increase in velocity of data generation and the variety in formats of seismograms (paper-based, digital, magnetic types). The onset of a geophysical big data era resulted in further challenges of processing of these data. Therefore, data-driven research plays a crucial role in analysis and digitizing of seismograms in big volumes. Out PhD project will exploit the available data from Royal Observatory of Belgium.
-
-As big data have an extremely large spatial and temporal scale, the use of ML tools is necessary for effective data handling in geophysics and seismology. At the same time, rapid and operative processing of seismic data can help preventing catastrophes in earthquake-prone areas (not necessarily in Belgium but with worldwide applications). ML proposes solutions to geophysical big data processing through automated methods and advanced software, since manual processing of seismograms in big volumes is technically impossible. This PhD thesis aims at developing methods of such data processing by ML for systematic operative monitoring of historical seismograms and converting them into digital form. The process of ML exploration includes automated signal processing, pattern recognition and classification by computer vision. The long-term perspectives and benefits of the project consist in applications both for theoretical geophysics (pure sciences) and seismology (applied engineering).
-
-\subsection{Data}
-The dataset received from the Uccle station presents a large collection of scanned paper-based seismograms. In this study, we used a collection of 139 images covering the period from 1 January 1954 to 12 March 1954. Some of the images have distortions and defects visible on the aged paper, Fig. \ref{fig:2}. These images show the set of the registered waveforms of seismic swarm that occurred between 1953 and 1957 close to the town of Court-Saint-Etienne, 20 km SE of Brussels. Similar seismic storm occurred recently (2008-2010) and was interpreted by \cite{VanNotenetal2015} as an evidence of fault processes in a weakened crust within the Cambrian core of the Brabant Massif, Belgium.
-
-\begin{figure}[H]
-     \centering
-     \begin{subfigure}[h]{0.7\textwidth}
-      	\centering
-         	\includegraphics[width=13.0cm]{images/Fig_UCC19540106Gal_N_0811_fragment.png}
-         	\caption{Empty rows between the lines of seismic traces with enlarged fragment}
-     \end{subfigure}
-     
-     \vspace{3mm}
-     \begin{subfigure}[h]{0.7\textwidth}
-         \centering
-        		 \includegraphics[width=13.0cm]{images/Fig_UCC19540107Gal_N_0815_fragment.png}
-        		 \caption{Partially spotted image with enlarged fragment of seismogram}
-     \end{subfigure}
-          
-     \vspace{3mm}
-     \begin{subfigure}[h]{0.7\textwidth}
-         \centering
-        		 \includegraphics[width=13.0cm]{images/Fig_UCC19540108Gal_N_0815_fragment.png}
-        		 \caption{Noise dark background on the image with enlarged fragment of seismogram}
-     \end{subfigure}
-     
-      \vspace{3mm}
-     \begin{subfigure}[h]{0.7\textwidth}
-         \centering
-        		 \includegraphics[width=13.0cm]{images/Fig_UCC19540112Gal_E_0750_fragment.png}
-        		 \caption{Overlapped traces with selected enlarged fragment of seismogram}
-     \end{subfigure}
-     \caption{Examples of the visible defects on the raw data: old analog seismograms recorded by Uccle seismic station, Belgium, 1954, scanned and saved as TIFF files. Some images have visible distortions and defects.} \label{fig:2}
-\end{figure}
-
-
-\subsection{Software and Workflow}
-In this study, for processing seismograms we used the DigitSeis, a MATLAB based software for processing analog scanned seismograms \cite{BogiatzisIshii2016}. The DigitSeis applies the extracts information from the scanned seismograms processed as a image matrix. It uses the principles of semi-automated algorithms of signal processing with minor human supervision used for assessment of functionality and monitoring of technical workflow. The aim of this study was to convert historical raster seismogram images recorded in Uccle seismic station in 1954 into the digital format as time series. Specifically, we used DigitSeis to identify traces on scanned TIFF files of seismograms and processes them by automatic detection of lines and adjustment of the distortions (broken lines, spots, repetitive gaps on the series of lines, etc). 
-
-\begin{figure}[H]
-     \centering
-     \begin{subfigure}[h]{0.7\textwidth}
-      	\centering
-         	\includegraphics[width=13.0cm]{Fig_03a.jpg}
-         	\caption{Original seismogram (UCC19540109Gal\_E\_0812.tif)}
-     \end{subfigure}
-     \vspace{3mm}   
-
-     \begin{subfigure}[h]{0.7\textwidth}
-         \centering
-        		 \includegraphics[width=13.0cm]{Fig_03b.jpg}
-        		 \caption{Seismogram processed by DigitSeis}
-     \end{subfigure}
-     \caption{Seismogram recorded from Uccle station on 9 January 1954} \label{fig:3}
-\end{figure}
-
-\subsubsection{Image preprocessing}
-First, the images were loaded into the program as TIFF files, converted into the native formal of DigitSeis and prepared for further processing. Visually, the image contained white traces of measured seismic signals over a black background (Fig. \ref{fig:3}). In the selected images with limited data and large dark background the areas of interest were cropped to reduce the space without traces and to select only a part of image to test a smaller space area of interest. The resulted analysis was saved continuously throughout the workflow into a in the binary data MATLAB format as a .mat file.
-
-\subsubsection{Identifying time marks on seismograms}
-Afterwards, we evaluated the 1-second time mark dimensions which show the breaks of the line along its course. The whole line takes 30 min intervals on the seismogram which shows the occurrence of the earthquake signals for each line (Fig. 3). It was performed by measuring width and offset of the gaps in the traces and recording the values in the menu bar. Because the majority of lines show images without time marks but with gaps, the time mark width was set to a negative number (-20). On this step we excluded the non-trace lines as our seismograms had only gaps for time marks, thus traces were the only necessary objects. This was a preparatory step before signals classification, as time mark settings are used to properly identify signal traces. To receive an accurate mean measurement values, we indicated time marks on the raster seismograms as -20 (so the gaps of smaller that this value could be included). After the time mark width was set up, the signals were prepared for classification. 
-
-\begin{figure}[H]
-     \centering
-     \begin{subfigure}[h]{0.7\textwidth}
-      	\centering
-         	\includegraphics[width=13.0cm]{Fig_04a.jpg}
-         	\caption{Enlarged fragment of the classified image with shown yellow segments to be merged}
-     \end{subfigure}
-     \vspace{3mm}   
-
-     \begin{subfigure}[h]{0.7\textwidth}
-         \centering
-        		 \includegraphics[width=13.0cm]{Fig_04b.jpg}
-        		 \caption{Classified seismogram with traces saved in binary format 0-1}
-     \end{subfigure}
-     \caption{Results of the paper seismogram classification processed by DigitSeis} \label{fig:4}
-\end{figure}
-
-\subsubsection{Classification}
-Using DigitSeis classification tool we automatically converted the image from raster TIFF file into the vector objects in a binary format which was done based upon partition of pixels to 0-1 categories. Combining some segments of the traces was done using the crosshairs (Fig. \ref{fig:4}). The classification settings were adjusted using the Classify Objects function of DigitSeis, in order to make the automated processing smooth and accurate (Fig. \ref{fig:4}). 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Results}
-\rhead{Subsection}
-\lhead{Results}
-
-\subsection{Subsection}
-\subsubsection{Subsubsection}
-\textcolor{red}{\lipsum[1]}
-
-\subsection{Subsection}
-\textcolor{red}{\lipsum[1]}
-
-\subsection{Subsection}
-\textcolor{red}{\lipsum[1]}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Discussion}
-\rhead{Subsection}
-\lhead{Discussion}
-
-\subsection{Innovation}
-A challenge of machine learning for seismological dataset processing nowadays is to secure access to the historical datasets available as paper format. The need for digitizing seismograms is explained by the technological changes of data processing. Smart solutions to tackle the challenges of signal processing in seismic studies and to assist in monitoring of earthquake signals are critical for optimizing data processing and geophysical monitoring. Manual processing of seismic data is time-consuming and laborious. In turn, using machine learning tools for processing seismic data enables to rapid yet accurate data modelling and converting them from scanned paper-based format to the digital form. Rapid advancements in geosciences and IT industry can propose solutions for creating real-time monitoring system for improving digitizing of seismograms. Implementing digital management presents the basis for strategies aimed at optimizing historical archives available from previous measurements at Royal Observatory of Belgium, Department of Seismology and Gravimetry.
-
-Applying geosciences and IT programming tools in seismology creates new perspectives for development of digitization tools. Specifically, there is a large amount of high-resolution seismogram data (each seismogram image is about 360 MB) collected from the Belgian seismic station of Uccle. Seismograms present the reliable source of information regarding ground motion of the Earth, and they need to be processed effectively, accurately and rapidly.
-Application of the advanced tools for processing historical seismograms is a valuable approach for improving the seismic data management and preserving the existing datasets for further re-use and retrospective seismic analysis through accurate and semi-automated data digitizing. Using ML/DL for RS data analysis and signal processing can assists in selecting trend in past recording of ground motion around Uccle. As an expected output, we plan to propose new algorithms of seismic data processing (DL by Python’s libraries Keras and TensorFlow), as well as use and test already existing approaches (e.g. DigitSeis, SKATE, etc.).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Conclusions}
-\rhead{Subsection}
-\lhead{Conclusions}
-\textcolor{red}{\lipsum[1]}
 
 %=====================================
 % References: Bibliography
