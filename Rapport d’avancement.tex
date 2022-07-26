@@ -335,36 +335,172 @@ Thus, during the \nth{1} thesis year (2021/2022) we performed the following acti
 The images were captured using API script from the original location in a SeismoStorm workspace of Cytomine and read into Python platform. The tiles were downloaded using the defined credentials, image IDs and the access to path in the Cytomine. Since the resolution of each image is high, the size of the images (ca. 400 MB each) did not technically allow to process them simultaneously due to the high amount of the required computer memory. Therefore, each image was divided into the several tiles with defined dimensions which were digitised separately. The tiles had the following dimensions: width=4 minutes, height=1024 pixels, the overlap between the two images 1.1\% * 1.1\% minute. The horizontal gap of the overlap between the images (interline) is 200 pixels. One minute on a seismogram corresponds to the 1400 pixels in the original TIFF. 
 
 \subsection{Detection of ROI}
-To optimise the data processing and to avoid empty spaces on the edges of the paper, the original images were cropped by defining the threshold of pixels in the Region of Interest (ROI), The procedure of thresholding crops the image using the values of pixels' colour and intensity \cite{GonzalezWoods}. The process of thresholding is based on analysis and separating the colours of the pixels: dark objects (lines of the seismogram) were separated from the white/light background. Thus, it classifies pixels in a data pool into those above the threshold value as 'background' (i.e., empty edges of the image) and those lesser than a threshold as 'target class objects' (i.e., seismogram traces). 
+To optimise the data processing and to avoid empty spaces on the edges of the paper, the original images were cropped by defining the threshold of pixels in the Region of Interest (ROI). Thresholding crops the image using the values of pixels' colour and intensity \cite{GonzalezWoods}. The process is based on separating of the pixel's colours: dark objects (traces) were separated from the white background. It classifies pixels into those above the threshold as 'background' (empty edges) and those lesser than a threshold as 'target class objects' (seismogram traces). The procedure was performed using RANSAC (RANdom SAmple Consensus) algorithm \cite{FischlerBolles}, commonly used in image processing, which is an iterative method to estimate the parameters of the robust model which includes input data with outliers (noise). The aim of RANSAC is to select the correct inlier correspondences given a set of the one-to-one matches. In our model, the fit() function of RANSAC was used to fit the tiles to given target values of the tile period $ransac.fit(x\_hours, y\_hours)$. 
 
-The procedure was performed using the RANSAC (RANdom SAmple Consensus) algorithm \cite{FischlerBolles}, which presents an iterative method to estimate the parameters of the model from the dataset that has outliers (noise). The RANSAC is commonly used in image processing for estimating the robust model which includes input data with outliers. The aim of the RANSAC is to select the correct inlier correspondences given a set of the one-to-one matches. In our model, the fit() function of RANSAC was used to fit the tiles to given target values of the tile period $ransac.fit(x\_hours, y\_hours)$. 
+\begin{figure}[H] 
+	\begin{subfigure}{0.50\textwidth}
+		\includegraphics[width=\linewidth]{fig_ROIa}
+		\caption{Horizontally oriented image. Upper row: the complete seismogram (left), enlarged fragment (right). Bottom row: histogram for the whole image (left); fragment with detected and ignored noise (right).} \label{fig:04a}
+	\end{subfigure}
+\hspace*{\fill}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{fig_ROIb}
+		\caption{Vertically rotated image. Red dashed line indicate the threshold value. Pixels with values above the threshold are classified as noise and excluded from the analysis. Right: enlarged fragment} \label{fig:04b}
+	\end{subfigure}
+\caption{Defining the ROI on various seismograms. The mask only included the ROI between the red dashed lines. The histograms show the distribution of pixels with values excluded from the ROI} \label{fig:04}
+\end{figure}
 
-The boolean array of inliers was defined using masking of data: $inlier\_mask = ransac.inlier\_mask\_$ and $outlier\_mask = np.logical\_not(inlier\_mask)$. The search for the closest segment in the sequence of tiles on a seismogram was always starting to the right (new next minute), then the next minutes. Accordingly, the search for the closest segment was starting to the left (minute 0 of the hour) then the previous minutes. In such a way, the algorithm propagated along a line, searching for every consecutive minute iteratively. The values of the minute marks and hour gaps were evenly spaced within an interval of time covering each seismogram using NumPy as follows: $line_X = np.arange(x\_hours.min(), x\_hours.max())[:, np.newaxis]$. For the case of vertically-oriented images the rotation was done using the numpy.transpose module of NumPy which enables to reverse the axes of an array of pixels.
+The boolean array of inliers was defined using masking: $inlier\_mask = ransac.inlier\_mask\_$ and $outlier\_mask = np.logical\_not(inlier\_mask)$. The search for the closest segment in the sequence of tiles on a seismogram was always starting to the right (new next minute), then the next minutes. Accordingly, the search for the closest segment was starting to the left (minute 0 of the hour) then the previous minutes. In such a way, the algorithm propagated along a line of the seismogram, searching for every consecutive minute iteratively. Minute marks and hour gaps were evenly spaced within an interval of time covering each seismogram using NumPy as follows: $line_X = np.arange(x\_hours.min(), x\_hours.max())[:, np.newaxis]$. For vertically-oriented images the rotation was done using numpy.transpose module of NumPy which enables to reverse the axes of an array of pixels.
 
-The detection of the ROI was performed using thresholding aimed to separate the main part on the image with meaningful data from the ignored part of the image that contains noise. Thresholding was performed as a the partition of the image based on pixels' values of colour intensity. The iterative algorithms separated image into the two parts and divided all the pixels on the image into the two groups: with colour intensity above and below the threshold. Fig. \ref{fig:04} illustrates the process. It shows the seismogram (left) and its enlarged fragment of the selected region with vectorised traces (right). The bottom row of the figure presents histograms used for detecting ROI by thresholding. 
+The detection of the ROI was performed using thresholding which separated the main part on the image with meaningful data from the ignored part that contains noise. Thresholding partitioned the image using pixels' values of colour intensity. The iterative algorithms separated the image into the two parts and divided all the pixels into the two groups: with colour intensity above and below the threshold. Fig. \ref{fig:04} illustrates the process. It shows the seismogram (left) and its enlarged fragment of the selected region with vectorised traces (right). The bottom row of the figure presents histograms used for detecting ROI by thresholding. 
 
 The pixels on the seismogram with values excessed threshold level indicated noise and were excluded from the data analysis (those above the red dotted line). The area between the red dashed lines shows the ROI, Fig. \ref{fig:04}. In visualisation, the pixels located within the ROI were used for data processing, while those beyond the ROI were excluded since their values exceeded the threshold line, as shown in histograms as red line in the bottom row of Fig. \ref{fig:04}). The enlarged fragment shows the pixels that are classified as noise and excluded from further data analysis. The excluded parts of the images are empty edges of the paper, with no seismic data. The same approach has been applied for the vertically-rotated seismograms. 
 
 \subsection{Segmentation parameters estimation}
 Our approach of seismogram vectorisation consists of training an algorithm of classifiers that discriminates pixels forming seismic trace from the background, detecting time gaps, annotations and noise pixels, Fig. \ref{fig:06}. The thickness of the vectorised trace line on the seismograms was defined by a series of trial tests with varied parameters, Fig. \ref{fig:05}. The lines used as empirical testing and training data for identification of optimal thickness seismic traces are one-minute segments of the seismogram traces. We repetitively changed the combinations of pixels' radius and line thickness to find the optimal combination. The pairing was performed without replacements and visualised as a continuous plot (Fig. \ref{fig:05}) in order to visually compare the outputs. The sample results show the images representing trials of the line thickness for various combinations of radius, number of pixels in a line, and percentage (\%) of the intensity of grey in pixel’s colour. 
 
+\begin{figure}[H] 
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{fig_05a}
+		\caption{Tested line with a thickness varying from 17 to 34 and a radius defined at 50 pixels. Repetitive small breaks along the line dividing it into segments indicate minute time gaps. The radius of 30 pixels was defined as the optimal for a given seismogram but it may vary in other individual cases of different images).} \label{fig:05a}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{fig_05b}
+		\caption{Line thickness (in number of pixels) vary from 14 to 26 (upper row), 19 to 34 (central row) and 20 to 38 (lower row) and radius of 40, 50 and 60 for each corresponding row (downwards).} \label{fig:05b}
+	\end{subfigure}
+
+\caption{Variants of tested threshold thickness of the trace line. Changed line thickness is visible in all trial cases (yellow-coloured horizontal lines)} \label{fig:05}
+\end{figure} 
+
 Similar to the studies on object recognition \cite{Carmichael,Pernici}, the classifiers are used to define the threshold of objects' parameters. Afterwards, the algorithm performed the comparison of the actual parameters within the threshold and did the partition of the image by assigning/rejecting pixels to/from the class of 'lines'. The object tracking was done iteratively until the whole seismogram is classified and lines were detected. Using the defined parameters the pixels were distinguished from the background using objects' appearance learned previously from the definitions of the threshold. The final data structure is presented by the vector data that can be overlaid on the original scanned TIFFs for quality control and visual inspections. The overlay of data was performed in the Cytomine environment. 
 
 \subsection{Tile processing} 
 Each image contained 180 tiles which were processed individually. Selecting the tiles from the original image was technically done using linear\_model of Scikit-Learn library (sklearn.linear\_model.RANSACRegressor). The  KDTree class of scipy.spatial module was used for processing structures of spatial data. The processing workflow for each tile included segmentation of line on each tile extracted from the ROI, edge detection, vectorisation of individual traces and indicating times, by creating buffers for minute intervals and detecting time gaps for one tile on a seismogram. The segmentation of the line is applied to each tile extracted from the ROI. The lines on the seismograms were thinned using the cycles of algorithm executed iteratively until only the skeleton of line remained. The following parameters were tested: number of pixels forming the line, radius of pixel's neighbourhood and threshold of colour intensity in pixels. 
 
-The edges of seismic traces (start and end points) were detected according to the structure of seismogram: minute and hour time gaps made by the drum of the seismometer which signify the ends of the line segments. Each tile on the image was digitised individually. This resulted in digitised segments visualised as vector lines on the seismograms, coloured randomly, Fig. \ref{fig:06}. The interpretation of the straight or slightly curved lines performed well, while overlapping of lines required attention when defining the parameters for automatic line detection. The overlap cases existed between the two neighbour tiles with an overlap defined as 1.1\% of minute. In these cases the border traces were digitised twice. The correction of such cases was done semi-automatically by checking the border regions and ignoring the overlapped vector segments in neighbouring tiles. Each image contained 180 tiles processed individually during 10 seconds for each tile. The total time processing for one seismogram is ca. 30 minutes, which demonstrates a high time efficiency of the proposed algorithm. The algorithm was tested initially on a single image processed as a complete workflow and then applied for the dataset. 
+\begin{figure}[H] 
+	\begin{subfigure}{0.50\textwidth}
+		\includegraphics[width=\linewidth]{fig_06a}
+		\caption{Slanted line crossing the seismogram shows hour gaps} \label{fig:06a}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.50\textwidth}
+		\includegraphics[width=\linewidth]{fig_06b}
+		\caption{Vectorised trace segments on the part of the spotted image} \label{fig:06b}
+	\end{subfigure}
+
+\medskip
+	\begin{subfigure}{0.20\textwidth}
+		\includegraphics[width=\linewidth]{fig_06c}
+		\caption{Hour gaps (green dots) and trend line} \label{fig:06c}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_06d}
+		\caption{Hour gaps and minute traces (randomly coloured)} \label{fig:06d}
+	\end{subfigure}
+	\begin{subfigure}{0.20\textwidth}
+		\includegraphics[width=\linewidth]{fig_06e}
+		\caption{Slanted line of hour gaps (enlarged)} \label{fig:06e}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.34\textwidth}
+		\includegraphics[width=\linewidth]{fig_06f}
+		\caption{Randomly coloured minute traces from a selected fragment of the seismogram} \label{fig:06f}
+	\end{subfigure}
+     
+\caption{Hour gaps detected using the repeatability pattern of gaps (double small gaps, closely located next to the first minute of the hour). Noise background is ignored while trace minute segments are clearly visible} \label{fig:06}
+\end{figure}
+
+The edges of seismic traces (start and end points) were detected according to the structure of seismogram: minute and hour time gaps made by the drum of the seismometer which signify the ends of the line segments. Each tile on the image was digitised individually. This resulted in digitised segments visualised as vector lines on the seismograms. The interpretation of the straight or slightly curved lines performed well, while overlapping of lines required attention when defining the parameters for automatic line detection. The overlap cases existed between the two neighbour tiles with an overlap defined as 1.1\% of minute. In these cases the border traces were digitised twice. The correction of such cases was done semi-automatically by checking the border regions and ignoring the overlapped vector segments in neighbouring tiles. Each image contained 180 tiles processed individually during 10 seconds for each tile. The total time processing for one seismogram is ca. 30 minutes, which demonstrates a high time efficiency of the proposed algorithm. The algorithm was tested initially on a single image processed as a complete workflow and then applied for the dataset. 
 
 \subsection{Line approximation and vectorisation}
-The lines were interpolated as several short segments of splines, separated by the minute gaps between each segment and vecrorised, Fig. \ref{fig:06}. The interpretation of the image on the pixel-based level is made by the machine algorithm of Python \cite{van1995python}, which assesses the curvature and colour of he pixels. The decision in pixel grouping is made using features of these pixels that match the target classes ('line'/'not line'): colour, distance to the threshold in pixels, angle of line direction, etc). The shape of the line as a vector geometric structure is recognised and identified by the machine vision, based on the assessment of the connectivity of pixels constituting the line, expect for the time gaps and marks breaking the trace in case of seismograms. The aim of the vectorisation algorithm is to transform the original raster pixels representing the line into a vector object with the centralised skeleton. The tested seismogram has been extracted from the original raster image with a coarse resolution. The vectorisation was done by tiles and resulted in the sequence of vector traces (minute segments) randomly coloured (Fig. \ref{fig:06}). Complex cases in vectorising process included overlap of lines, double vectorisation of the same line located on the border between the two tiles because of the different paths to this line.
+The lines were interpolated as several short segments of splines, separated by the minute gaps between each segment and vecrorised. The interpretation of the image on the pixel-based level is made by the machine algorithm of Python \cite{van1995python}, which assesses the curvature and colour of he pixels. The decision in pixel grouping is made using features of these pixels that match the target classes ('line'/'not line'): colour, distance to the threshold in pixels, angle of line direction, etc). The shape of the line as a vector geometric structure is recognised and identified by the machine vision, based on the assessment of the connectivity of pixels constituting the line, expect for the time gaps and marks breaking the trace in case of seismograms. The aim of the vectorisation algorithm is to transform the original raster pixels representing the line into a vector object with the centralised skeleton. The tested seismogram has been extracted from the original raster image with a coarse resolution. The vectorisation was done by tiles and resulted in the sequence of vector traces (minute segments). Complex cases in vectorising process included overlap of lines, double vectorisation of the same line located on the border between the two tiles because of the different paths to this line.
 
 \subsection{Creating buffer zones for line tracking}
-The algorithm identified trace segments and time intervals breaking the lines using buffer zones, Fig. \ref{fig:07}. Detecting timing gap intervals through buffering was done around hour and minute marks.  The features of the objects were defined used to train the classifiers to discriminate segments of seismic lines on the images. This process was based on the colours properties of pixels which were used to identify buffers for time gaps (break of dark line and light colour of the background).
+The algorithm identified trace segments and time intervals breaking the lines using buffer zones, Fig. \ref{fig:07sr}. Detecting timing gap intervals through buffering was done around hour and minute marks. The features of the objects were defined used to train the classifiers to discriminate segments of seismic lines on the images. This process was based on the colours properties of pixels which were used to identify buffers for time gaps (break of dark line and light colour of the background).
 
-The algorithm recognises brightness of the pixels and identifies those that do not reach the threshold level as not belonging to the class of 'line' and vice versa. After the traces were detected, the time gaps for trajectory were traced using the detection of breaks by tracking the line and detecting small gaps as minute and hour intervals. The minute segments were traced and marked as parts constituting the hour on each seimogram. This resulted in a matrix of pixels stored in a memory. The half hour intervals repeated every \nth{2} trace line following the hour gaps were detected for tiles where hour gaps were detected (Fig. \ref{fig:07}, a). Those are visible as red dots for hour ticks and the blue dots for the half hour ticks (Fig. \ref{fig:07}, b)). 
+\begin{figure}[H]
+\captionsetup[subfigure]{justification=centering}
+% first row subplot
+% include first image
+\begin{subfigure}{.68\textwidth}
+      	\centering
+         	 \includegraphics[width=17.0cm]{fig_07a.png}
+         \caption{Buffering minute intervals for the one-minute gaps for the complete seismogram}
+\end{subfigure}
+
+%\bigskip
+% include first image
+\begin{subfigure}{.47\textwidth}
+      	\centering
+         	 \includegraphics[width=10cm]{fig_07b.png}
+         \caption{Enlarged fragment: minute, hour and half hour gaps}
+\end{subfigure} \hfill  
+\hspace{1ex}
+% include second image
+     \begin{subfigure}{.45\textwidth}
+         \centering
+        		 \includegraphics[width=8.3cm]{fig_07c.png}
+        		 \caption{Buffering of missing data: minute and hour gaps}
+     \end{subfigure}
+     \caption{Randomly coloured slanted columns show buffers for minute and hour gaps (a) with dots as the points of minute/hour gaps on the seismograms. Hour gaps are identified based on the frequency of small breaks on the lines encountered once on each segment with occasional missing data (b). The \nth{3} column in (c) shows hour gaps (blue dots) and half hour gaps on every \nth{2} line (red dots).} \label{fig:07sr}
+\end{figure}
+
+The algorithm recognises brightness of the pixels and identifies those that do not reach the threshold level as not belonging to the class of 'line' and vice versa. After the traces were detected, the time gaps for trajectory were traced using the detection of breaks by tracking the line and detecting small gaps as minute and hour intervals. The minute segments were traced and marked as parts constituting the hour on each seimogram. This resulted in a matrix of pixels stored in a memory. The half hour intervals repeated every \nth{2} trace line following the hour gaps were detected for tiles where hour gaps were detected (Fig. \ref{fig:07sr}, a). Those are visible as red dots for hour ticks and the blue dots for the half hour ticks (Fig. \ref{fig:07sr}, b)). 
 
 \subsection{Time labelling}
 The time gaps were identified dividing the line into repetitive segments with regular intervals, Fig. \ref{fig:08}. Timing of hour marks was done using the detected double gaps located closely to the first minute of the following hour. The KDTree class from scipy.spatial Python module was used for automatic generation of time stamps based on the nearest neighbors search algorithm. Annotating the time intervals was performed using minute and hour gaps by identifying the breaks of seismic traces. The buffer zones of 500 pixels were created around the target pixel of each hour/minute gap to detect time marks, Fig. \ref{fig:08}. This buffer represents the zone of influence for each pixel in order to accurately find minute marks. The algorithm performed vectorising and timing of each tile in 10 seconds and processed seismograms in both vertical and horizontal orientation, Fig. \ref{fig:08}.
+
+\begin{figure}[H] 
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08a}
+		\caption{}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08b}
+		\caption{}
+	\end{subfigure}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08c}
+		\caption{}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08d}
+		\caption{}
+	\end{subfigure}
+\medskip
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08e}
+		\caption{}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08f}
+		\caption{}
+	\end{subfigure}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08g}
+		\caption{}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08h}
+		\caption{}
+	\end{subfigure}
+\medskip
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08i}
+		\caption{}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08j}
+		\caption{}
+	\end{subfigure}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08k}
+		\caption{}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.24\textwidth}
+		\includegraphics[width=\linewidth]{fig_08l}
+		\caption{}
+	\end{subfigure}
+\caption{Examples of the timing of seismogram tiles with buffer zone (slate gray colour), hour marks (thick short lines coloured randomly) and minute segments (thin lines coloured randomly). The hour marks and minutes are annotated on the graphs, e.g., 'h09m59' means hour 9 minute 59. The x and y axes show the default pixel coordinate system. Cytomine IDs of the images: \textbf{a}) 4433; \textbf{b}) 5765; \textbf{c}) 5779; \textbf{d}) 14485; \textbf{e}) 14391; \textbf{f}) 7759; \textbf{g}) 5673; \textbf{h}) 7765; \textbf{i}) 5660; \textbf{j}) 7795; \textbf{k}) 7747; \textbf{l}) 9417. Processing of image was possible both in horizontal and in vertical orientation.} \label{fig:08}
+\end{figure}
 
 Hour gaps were detected based on frequency as small breaks on the lines encountered once on each line segment: the location of each hour mark was identified based on its location within the seismogram. Along the path of the line, each pixel represents a central point of the line in a given transect directed perpendicular to the line path. By moving along its path in a continuous way, these pixels are connected. A series of these pixels forms a shape of the vector line in a continuous way. Thus, the contour of the line is presented by the centroids of the original lines on raster images plotted on the scanned image by the recorder of the seismometer. This enabled to perform tracking of seismic lines based on their discriminating from the noise and background using parameters of colour of pixels. 
 
@@ -400,14 +536,18 @@ High vectorising precision is achieved due to the theoretical approach of algori
 
 \section{Work prospects for the \nth{2} year of the thesis}
 \begin{itemize}
-	\item During the next academic year (2022/2023) we plan to publish our results in \href{https://www.nature.com/srep/}{Scientific Reports} journal from the Nature group. 
-	\item We plan to process more datasets including other years (1954+) upon the increase of available scanned datasets at Uccle station. 
-	\item We plan to include further options for analysis of data processed by the novel algorithm, e.g., analyses of signal trace amplitude, strength and repeatability of vibration, comparison of strength by years.
-	\item We plan to increase the datasets from other regions (seismology centres in Spain, SW France (Ifremer) and Germany) from the partner organisations.
+	\item We plan to publish our results in \href{https://www.nature.com/srep/}{Scientific Reports} (Nature group) during the next academic year (2022/2023). 
+	\item We plan to process more datasets including other years (1954+) based on available scanned data. 
+	\item We will test other options for data analysis by novel algorithm, e.g., signal trace amplitude, strength, repeatability of vibration, comparison of strength by years.
+	\item We consider to tests this algorithm using other data from different regions (seismology centres in Spain, SW France (Ifremer) and Germany), subject to data availability from partner organisations.
 \end{itemize}
 
-\section{Modules ECTS}
-Modules de formation du Programme de doctorat en sciences de l'ingénieur ULB: 5 ECTS for the Course LANG-B909, 60 h, niveau AVANC\'{E} 2, B2.2.
+\section{Other scientific activities}
+\begin{itemize}
+	\item Modules ECTS de formation du Programme de doctorat en sciences de l'ingénieur ULB: 5 ECTS for the Course LANG-B909, 60 h, niveau AVANC\'{E} 2, B2.2.
+	\item Assistant of supervision of MSc thesis \emph{Exploitation of EQTransformer and application to Belgian seismic data}, by Alexandre Missenard.
+	\item Active reviewer of journal manuscripts (domains: Earth sciences and Engineering): \href{https://publons.com/researcher/1587436/polina-lemenkova/}{Publons R-8828-2018}
+\end{itemize}
 
 \section{Publications}
 Conference paper accepted at 3ECEES (The Third European Conference on Earthquake Engineering and Seismology), \href{https://3ecees.ro/}{https://3ecees.ro/}.
@@ -419,16 +559,12 @@ Organizers: The National Institute for Earth Physics (INFP) and Technical Univer
 Date: September 4-9, 2022.                                
 Abstract: Before digital recordings became available in the 1970s, the ground motion was recorded using ink on white paper, scratching black-smoked paper, or light on photographic paper. While those analog seismic records offer unique continuous observations from the last century, most of them are now stacked and archived in boxes and potentially exposed to physical decay and permanent loss. To preserve those records and ultimately subject them to modern methods of analysis, it is time-sensitive to scan and digitize them. Here, we worked on a method for automatic digitization of paper seismograms using image processing and machine learning to extract microseismic ground-motion periods and amplitudes. We implemented the method on legacy data recorded at the Royal Observatory of Belgium to extract power spectral densities for major storms during the last century, which are compared with modeled microseisms levels computed using a numerical ocean wave model. This further shows how digitizing analog seismograms does not only preserve the scientific legacy but also makes new research possible by bringing analog data to the digital age. Topics: earthquake engineering engineering seismology earthquake disaster mitigation and management seismology and seismotectonics.
 
-\section{Conclusion}
-
-\subsection{Contribution de l'étude}
-
 
 %=====================================
 % References: Bibliography
 %=====================================
 
-\section*{Bibliography}
+\section*{}
 \rhead{References}
 \lhead{Bibliography}
 \addcontentsline{toc}{section}{Bibliography}
