@@ -168,19 +168,43 @@ In contrast, a ML-based algorithm can vectorise blurred or imperfect images, tha
 Many R2V methods were proposed for optimisation of the vectorisation algorithms. Some of them employ ML for improving the accuracy and accelerating the speed of vectorising \cite{SilvaCoira,Mineter,Tafoya,Doucette}. Along with the progress in programming, such methods gradually improved and resulted in a variety of the developed algorithms of vectorisation, e.g., threshold morphology \cite{Janssen1997}, real-time line extraction \cite{Pferd,FULFORD198165}, topological analysis \cite{GROSS1995370}, approximation \cite{StanberryBesag,WallDanielsson}, 3D reconstruction \cite{Ceylan}. More examples of R2V algorithms include recognising the lines and discriminating them from the white/light background by line thinning, finding edges and neighbouring nodes \cite{Suzuki}, contrasting line width and smoothing shapes \cite{BaoFu}, iterative line optimisation and segmentation by CNN \cite{Inoue}, layering image and segmenting skeletons \cite{Hilaire}, extracting contours by simplification \cite{San,Chenetal2006}. 
 
 \subsection{Motivation}
- The motivation to vectorise old scanned seismograms collected from the historical archives comes from the value of the seismic records for geophysical research. Seismograms reflect the characteristics of body and surface seismic waves of the Earth \cite{Kawai,Kennett}. They may originate from various types of sources corresponding to the geodynamic processes. Most often recording earthquake strength \cite{Krishna2006}, they can also indicate other types of disasters, e.g., avalanches, tsunami, volcanic eruptions \cite{Vijaya2015}. Furthermore, signals strength and amplitudes of seismic waves recorded in seismograms are used to determine the ground motion of the Earth using specific properties and nature of seismic waves which includes the geometry of movements \cite{Lamb,Liuetal2016,Mueller,Fryer}. Records of the horizontal components in seismograms show regional heterogeneity and variations in the elastic parameters of the Earth's mantle \cite{Melchior}. Moreover, seismic wave velocity is strongly related to the tectonic processes \cite{Leveque,Butler} and characteristics of the lithosphere \cite{Knopoff,Singh}, reflect regional geologic structure \cite{gupta19663,Mitchell} and geodynamic characteristics of shallow soil layer \cite{Verachtert}. 
-
-\subsection{Methodology}
-During the \nth{1} thesis year (2021/2022) we developed the approach of Python to a vectorisation of seismograms, which included trace line thinning, thresholding and detecting the time gaps to automatically recognise seismic traces on the images. A dataset of bitmap images containing scanned seismograms was processed by me using the code written on Python language by Prof. Dr. O. Debeir. The methods included automatic vectorising and converting the seismogram images from raster to vector format (R2V), detecting traces and identifying time gap intervals automatically. Thus, we proposed a novel Python-based algorithm to automatic vectorisation of the scanned analog seismograms.
+ The motivation to vectorise old scanned seismograms collected from the historical archives comes from the value of the seismic records for geophysical research. Seismograms reflect the characteristics of body and surface seismic waves of the Earth \cite{Kawai,Kennett}. They may originate from various types of sources corresponding to the geodynamic processes. Most often recording earthquake strength \cite{Krishna2006}, they can also indicate other types of disasters, e.g., avalanches, tsunami, volcanic eruptions \cite{Vijaya2015}. Furthermore, signals strength and amplitudes of seismic waves recorded in seismograms are used to determine the ground motion of the Earth using specific properties and nature of seismic waves which includes the geometry of movements \cite{Lamb,Liuetal2016,Mueller,Fryer}. 
+ 
+ \begin{figure}[H]
+     \centering
+     \begin{subfigure}[h]{0.7\textwidth}
+      	\centering
+         	\includegraphics[width=13.0cm]{fig_04a.png}
+         	\caption{Empty records between the lines of seismic traces with enlarged fragment of seismogram. Here: UCC19540106Gal\_N\_0811.TIFF}
+     \end{subfigure}
+     
+  \vspace{3mm}
+     \begin{subfigure}[h]{0.7\textwidth}
+         \centering
+        		 \includegraphics[width=13.0cm]{fig_04d.png}
+        		 \caption{Overlapped traces of a very large event which cause a problem during vectorising with selected enlarged fragment of seismogram. Here: UCC19540112Gal\_E\_0750.TIFF}
+     \end{subfigure}
+     \caption{Examples of the old seismograms with enlarged fragments showing overlapping traces and recording gaps. Source: scanned images from Uccle seismic station, ROB, Belgium, 1954.} \label{fig:04}
+\end{figure}
+ 
+Records of the horizontal components in seismograms show regional heterogeneity and variations in the elastic parameters of the Earth's mantle \cite{Melchior}. Moreover, seismic wave velocity is strongly related to the tectonic processes \cite{Leveque,Butler} and characteristics of the lithosphere \cite{Knopoff,Singh}, reflect regional geologic structure \cite{gupta19663,Mitchell} and geodynamic characteristics of shallow soil layer \cite{Verachtert}. 
 
 \subsection{Objective}
 During the \nth{1} thesis year (2021/2022) we addressed a problem of vectorising seismograms by a novel algorithm for automated vectorising of seismograms based on Python programming. The objective was to develop and test this algorithm, which enables to digitise a massive archive dataset of seismograms automatically. 
 
 \subsection{Goal}
-The goal of our novel algorithm is to recognise specific features on the seismograms, i.e., to distinguish time intervals (minute/hour gaps/marks), annotations, time marks, and noise. Most of the existing R2V applications ignore specific features of seismograms: signal trace amplitude, strength and repeatability of vibration, time intervals (minute/hour gaps/marks recorded by the seismometer drum), handwritten technical annotations indicating time, and noise often in the edges of the paper (stains, spots, blurs). Besides, the overlapped trace lines caused by the increased signals from the ground motion should be specially treated. The existing algorithms do not consider these variables, which makes vectorisation a mechanical process of line tracking. Instead, they are focused on simple graphics and drawing \cite{Filipski19921195,Kasturi} or scanned maps \cite{1285753,Spinello}. However, vectorising seismograms presents a more complex task, compared to line detection in drawing and graphics \cite{Greenlee,Hooi,BLACK198133}, due to the additional semantic components embedded in geophysical records. Thus, our goal is to overcome the existing gaps in vectorisation by considering features of seismograms.
+The goal of our novel algorithm is to recognise specific features on the seismograms, i.e., to distinguish time intervals (minute/hour gaps/marks), annotations, time marks, and noise. Most of the existing R2V applications ignore specific features of seismograms: signal trace amplitude, strength and repeatability of vibration, time intervals (minute/hour gaps/marks recorded by the seismometer drum), handwritten technical annotations indicating time, and noise often in the edges of the paper (stains, spots, blurs). 
 
-\section{Summary of the obtained results}
-I tested the code and performed data analysis using the novel Python-based algorithm written by O. Debeir. This algorithm enabled to automatically convert the bitmap graphics into a vector format using the R2V method which I processed at LISA. The Python was used because of its high computational functionality, logic and flexibility of syntax \cite{van1995python} and demonstrated robust results, according to the validation and quality control. 
+\begin{figure}[H]
+       \centering
+        		 \includegraphics[width=13.0cm]{fig_07b.jpg}
+     \caption{Scanned seismogram with enlarged fragment showing time gaps indicating minute marks and separating traces (tiny white gaps breaking the lines)} \label{fig:07}
+\end{figure}
+
+Besides, the overlapped trace lines caused by the increased signals from the ground motion should be specially treated. The existing algorithms do not consider these variables, which makes vectorisation a mechanical process of line tracking. Instead, they are focused on simple graphics and drawing \cite{Filipski19921195,Kasturi} or scanned maps \cite{1285753,Spinello}. However, vectorising seismograms presents a more complex task, compared to line detection in drawing and graphics \cite{Greenlee,Hooi,BLACK198133}, due to the additional semantic components embedded in geophysical records. Thus, our goal is to overcome the existing gaps in vectorisation by considering features of seismograms.
+
+\section{Methodology}
+During the \nth{1} thesis year (2021/2022) we developed the approach of Python to a vectorisation of seismograms, which included trace line thinning, thresholding and detecting the time gaps to automatically recognise seismic traces on the images. A dataset of bitmap images containing scanned seismograms was processed by me using the code written on Python language by Prof. Dr. O. Debeir. The methods included automatic vectorising and converting the seismogram images from raster to vector format (R2V), detecting traces and identifying time gap intervals automatically. Thus, we proposed a novel Python-based algorithm to automatic vectorisation of the scanned analog seismograms.
 
 \subsection{Workflow}
 The general workflow of the work that we did during the \nth{1} thesis year (2021/2022) consists in large massif dataset processing. The workflow for this processing is outlined as followed: 
@@ -205,15 +229,87 @@ The general workflow of the work that we did during the \nth{1} thesis year (202
 
 I used this workflow for processing large dataset containing seismograms with aim to convert them from raster to vector format using novel Python-based algorithm. 
 
-\subsection{Data processing}
+\subsection{Data}
+During the academic year 2021/2022 we processed the dataset containing seismic records from Uccle seismic station of the Royal Observatory of Belgium (ROB). The seismograms were recorded by the Galitzine seismometer in 1954, an electromagnetic instrument developed in 1910 to record a single component (horizontal or vertical) of ground motions. The data were recorded by the drum of the seismometer and stored in boxes in a storage space of the ROB and reflect the seismicity of the Earth.
+
+ \begin{figure}[H]
+     \centering
+     \begin{subfigure}{0.5\textwidth}
+      	\centering
+         	\includegraphics[height=7.6cm]{fig_Gal.jpg}
+     \end{subfigure}\hspace*{\fill}
+     \begin{subfigure}{0.5\textwidth}
+         \centering
+        		 \includegraphics[height=8cm]{fig_map.jpg}
+     \end{subfigure}
+     \caption{Galitzine seismometer used for seismic recording (left). Location of Uccle seismic station of the Royal Observatory of Belgium (Observatoire royal de Belgique) on a topographic map (right)} \label{fig:04}
+\end{figure}
+
+The dataset included over 140 scanned images of archived seismograms recorded in 1954. The data coverage period is from 1 January 1954 to 12 March 1954. For data vectorisation, processing and plotting I used the algorithm written on Python by Prof. Dr. O. Debeir. Vectorised seismograms reflect the ground motions, so we plan to proceed with geophysical evaluation of the data values.
+
+\subsubsection{Data processing}
 
 \subsubsection{Data scanning and formatting}
-Data processing was performed during winter 2021 (October/December 2021). We processed data scanning (performed at ROB) and stored them in digital bitmap format. The images were scanned with a high resolution (600 dpi) and A0 format using a large-format scanning device HD Ultra X Series (36'', 42'')/HD Ultra X ScanStation. The seismograms were recorded by the Galitzine seismometer, an electromagnetic instrument developed in 1910 to record a single component (horizontal or vertical) of ground motions. The data were recorded by the drum of the seismometer and stored in boxes in a storage space of the ROB and reflect the seismicity of the Earth. 
+Data processing was performed during winter 2021 (October/December 2021). We processed data scanning (performed at ROB) and stored them in digital bitmap format. The images were scanned with a high resolution (600 dpi) and A0 format using a large-format scanning device HD Ultra X Series (36'', 42'')/HD Ultra X ScanStation.  
 
 The images were then converted into bitmap 0/1 (white/black) and saved as files in graphical bitmap formats: TIFF, JPG and PNG. Most of the data were stored in TIFF format which present a matrix of 2D arrays of pixels assigned to a value in a gray scale. The files were stored with metadata summarised for our paper which is in progress of \emph{Scientific Reports} journal (planned). The images were stored with a resolution of 300 dpi, ca. 350-400 MB size each, in 256 B/W monochrome scales. We also performed visual data analysis and inspection: the records from the Galitzine seismometer are monochrome, while those of Wiecherts are in colour (ivory background). The dataset included 145 images of the analogue seismograms in a raster format. 
  
  \subsubsection{Data management and organisation}
-During December 2021 and January 2022 we performed data processing in the Cytomine workspace and editing system for interactive data storage and management. The files were uploaded in Cytomine (\href{https://cytomine.com/}{Cytomine}). where we kept and processed images using the following functionality: organising and navigating the data, adding metadata and annotations, visualising and analysing the images, basic image manipulations (rapid view, zooming and rotating). The technical details of the images were recored in metadata and included information regarding the resolution, size, perimeter and area in pixels. As a workspace, Cytomine provides storage place for a large dataset. We uploaded and organised 145 files, each ca. 300-400 MB of size. 
+During December 2021 and January 2022 we performed data processing in the Cytomine workspace and editing system for interactive data storage and management. The files were uploaded in Cytomine (\href{https://cytomine.com/}{Cytomine}). 
+
+\begin{figure}[H] 
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_02a.jpg}
+		\caption{Annotated seismogram with handwritten remarks} \label{fig:02a}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_02b.jpg}
+		\caption{Hour ticks, minute ticks and categories as object classes} \label{fig:02b}
+	\end{subfigure}T
+\medskip
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_02c.jpg}
+		\caption{Segments, start hours ticks and flares as object classes} \label{fig:02c}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_02d.jpg}
+		\caption{Structure of SeismoStorm project in Cytomine} \label{fig:02d}
+	\end{subfigure}
+\caption{Detected and annotated object classes on the scanned seismograms} \label{fig:02}
+\end{figure} 
+
+\begin{figure}[H] 
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_cyta.jpg}
+		\caption{Hour ticks on the recorded by the seismometer drum} \label{fig:03a}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_cytb.jpg}
+		\caption{Segments separated as fragments on the trace lines} \label{fig:03b}
+	\end{subfigure}
+\medskip
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_cytc.jpg}
+		\caption{Manual ticks for the start hours on the spotted image} \label{fig:03c}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_cytd.jpg}
+		\caption{Manual hour marks for handwritten annotations} \label{fig:03d}
+	\end{subfigure}
+\medskip
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_cyte.jpg}
+		\caption{Flares detected on the old scanned raster images} \label{fig:03e}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=6cm]{fig_cytf.jpg}
+		\caption{Minute marks recognised on seismograms} \label{fig:03f}
+	\end{subfigure}
+
+\caption{Examples of the annotation classes, distortions on the image and classified time marks.} \label{fig:03}
+\end{figure}
+
+In Cytomine we kept and processed images using following steps: organising and navigating the data, adding metadata and annotations, visualising and analysing the images, basic image manipulations (rapid view, zooming and rotating). Technical details of the seismograms were recored in metadata and included information regarding the resolution, size, perimeter and area in pixels. As a workspace, Cytomine provides storage place for a large dataset. We uploaded and organised 145 files, each ca. 300-400 MB of size. 
 
 \subsection{Progress}
 During the \nth{1} thesis year (2021/2022) we developed and tested the original programming code to fully automate vectorisation of the scanned old seismograms. To this end, we used Python language for generating algorithm of image processing and ML techniques for discrimination of seismic trace. To test this code, we used archived dataset obtained from the Royal Observatory of Belgium, Uccle seismic station, scanned as high‐resolution images (over 100 high-resolution files). These seismograms were recorded by the Galitzine seismograph in 1954. 
@@ -232,8 +328,30 @@ Thus, during the \nth{1} thesis year (2021/2022) we performed the following acti
 \end{enumerate}
 	The workflow that we tested during my \nth{1} thesis year (2021/2022) demonstrated high potential of using Python programming language for automated image processing in seismology and applied geophysics. Thus, the advantages of the developed algorithm include high speed and automation of data processing, accuracy and robustness of the vectorisation results.
 
-\subsection{Achieved results}
-During the academic year 2021/2022 I processed the dataset containing seismic records from Uccle seismic station of the Royal Observatory of Belgium (ROB). The dataset included over 100 scanned images of archived seismograms recorded in 1954. The data coverage period is from 1 January 1954 to 12 March 1954. For data vectorisation, processing and plotting I used the algorithm written on Python by Prof. Dr. O. Debeir. Vectorised seismograms reflect the ground motions, so we plan to proceed with geophysical evaluation of the data values.
+\section{Results}
+During the \nth{1} thesis year (2021/2022) I processed large dataset of seismograms, tested and executed the code and performed data analysis using novel Python-based algorithm written by O. Debeir. This algorithm enabled to automatically convert the bitmap graphics into a vector format using the R2V method which I processed at LISA. The Python was used because of its high computational functionality, logic and flexibility of syntax \cite{van1995python} and demonstrated robust results, according to the validation and quality control. 
+
+\subsection{Examples of vectorised seismograms}\label{app2}
+\begin{figure}[H] 
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=9cm]{obspy_5.png}
+		\caption{traces\_UCC19540205Gal\_N\_0742.mseed}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=9cm]{obspy_6.png}
+		\caption{traces\_UCC19540203Gal\_N\_0821.mseed}
+	\end{subfigure}
+\medskip
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=9cm]{obspy_7.png}
+		\caption{traces\_UCC19540302Gal\_E\_0805.mseed}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=9cm]{obspy_8.png}
+		\caption{traces\_UCC19540309Gal\_E\_0817.mseed}
+	\end{subfigure}
+\caption{Examples of seismograms visualised in ObsPy using our novel Python-based algorithm} \label{fig:app01}
+\end{figure}
 
 \subsection{Empirical and/or theoretical approaches}
 In contrast to the existing traditional solutions (we compared the novel code with the performance of DigitSeis software), our algorithm presented several advantages. First, it enable to vectorise lines in both vertical and horizontal oriented modes. Besides, the algorithm empirically identifies trace segments and time intervals on the images using buffers in an automated mode. Finally, the vectorising workflow has a higher accuracy and speed of data processing compared to the state-of-the-art (DigitSeis) software. 
