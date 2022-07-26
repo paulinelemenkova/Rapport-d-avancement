@@ -168,24 +168,25 @@ In contrast, a ML-based algorithm can vectorise blurred or imperfect images, tha
 Many R2V methods were proposed for optimisation of the vectorisation algorithms. Some of them employ ML for improving the accuracy and accelerating the speed of vectorising \cite{SilvaCoira,Mineter,Tafoya,Doucette}. Along with the progress in programming, such methods gradually improved and resulted in a variety of the developed algorithms of vectorisation, e.g., threshold morphology \cite{Janssen1997}, real-time line extraction \cite{Pferd,FULFORD198165}, topological analysis \cite{GROSS1995370}, approximation \cite{StanberryBesag,WallDanielsson}, 3D reconstruction \cite{Ceylan}. More examples of R2V algorithms include recognising the lines and discriminating them from the white/light background by line thinning, finding edges and neighbouring nodes \cite{Suzuki}, contrasting line width and smoothing shapes \cite{BaoFu}, iterative line optimisation and segmentation by CNN \cite{Inoue}, layering image and segmenting skeletons \cite{Hilaire}, extracting contours by simplification \cite{San,Chenetal2006}. 
 
 \subsection{Motivation}
- The motivation to vectorise old scanned seismograms collected from the historical archives comes from the value of the seismic records for geophysical research. Seismograms reflect the characteristics of body and surface seismic waves of the Earth \cite{Kawai,Kennett}. They may originate from various types of sources corresponding to the geodynamic processes. Most often recording earthquake strength \cite{Krishna2006}, they can also indicate other types of disasters, e.g., avalanches, tsunami, volcanic eruptions \cite{Vijaya2015}. Furthermore, signals strength and amplitudes of seismic waves recorded in seismograms are used to determine the ground motion of the Earth using specific properties and nature of seismic waves which includes the geometry of movements \cite{Lamb,Liuetal2016,Mueller,Fryer}. 
+Seismograms reflect the characteristics of body and surface seismic waves of the Earth \cite{Kawai,Kennett}. Therefore, the motivation to vectorise old seismograms comes from the value of the seismic records for geophysical research. 
  
  \begin{figure}[H]
      \centering
      \begin{subfigure}[h]{0.7\textwidth}
       	\centering
-         	\includegraphics[width=13.0cm]{fig_04a.png}
+         	\includegraphics[width=10.0cm]{fig_04a.png}
          	\caption{Empty records between the lines of seismic traces with enlarged fragment of seismogram. Here: UCC19540106Gal\_N\_0811.TIFF}
      \end{subfigure}
-     
-  \vspace{3mm}
+  \vspace{1mm}
      \begin{subfigure}[h]{0.7\textwidth}
          \centering
-        		 \includegraphics[width=13.0cm]{fig_04d.png}
+        		 \includegraphics[width=10.0cm]{fig_04d.png}
         		 \caption{Overlapped traces of a very large event which cause a problem during vectorising with selected enlarged fragment of seismogram. Here: UCC19540112Gal\_E\_0750.TIFF}
      \end{subfigure}
      \caption{Examples of the old seismograms with enlarged fragments showing overlapping traces and recording gaps. Source: scanned images from Uccle seismic station, ROB, Belgium, 1954.} \label{fig:04}
 \end{figure}
+
+They may originate from various types of sources corresponding to the geodynamic processes. Most often recording earthquake strength \cite{Krishna2006}, they can also indicate other types of disasters, e.g., avalanches, tsunami, volcanic eruptions \cite{Vijaya2015}. Furthermore, signals strength and amplitudes of seismic waves recorded in seismograms are used to determine the ground motion of the Earth using specific properties and nature of seismic waves which includes the geometry of movements \cite{Lamb,Liuetal2016,Mueller,Fryer}. 
  
 Records of the horizontal components in seismograms show regional heterogeneity and variations in the elastic parameters of the Earth's mantle \cite{Melchior}. Moreover, seismic wave velocity is strongly related to the tectonic processes \cite{Leveque,Butler} and characteristics of the lithosphere \cite{Knopoff,Singh}, reflect regional geologic structure \cite{gupta19663,Mitchell} and geodynamic characteristics of shallow soil layer \cite{Verachtert}. 
 
@@ -242,7 +243,7 @@ During the academic year 2021/2022 we processed the dataset containing seismic r
          \centering
         		 \includegraphics[height=8cm]{fig_map.jpg}
      \end{subfigure}
-     \caption{Galitzine seismometer used for seismic recording (left). Location of Uccle seismic station of the Royal Observatory of Belgium (Observatoire royal de Belgique) on a topographic map (right)} \label{fig:04}
+     \caption{Data sources: Galitzine seismometer used for seismic recording (left). Location of Uccle seismic station of the Royal Observatory of Belgium (Observatoire royal de Belgique) on a topographic map (right).} \label{fig:04}
 \end{figure}
 
 The dataset included over 140 scanned images of archived seismograms recorded in 1954. The data coverage period is from 1 January 1954 to 12 March 1954. For data vectorisation, processing and plotting I used the algorithm written on Python by Prof. Dr. O. Debeir. Vectorised seismograms reflect the ground motions, so we plan to proceed with geophysical evaluation of the data values.
@@ -250,12 +251,11 @@ The dataset included over 140 scanned images of archived seismograms recorded in
 \subsubsection{Data processing}
 
 \subsubsection{Data scanning and formatting}
-Data processing was performed during winter 2021 (October/December 2021). We processed data scanning (performed at ROB) and stored them in digital bitmap format. The images were scanned with a high resolution (600 dpi) and A0 format using a large-format scanning device HD Ultra X Series (36'', 42'')/HD Ultra X ScanStation.  
+Data processing was performed during October/December 2021. We processed data scanning (ROB) and stored them in digital bitmap format. The images were scanned with a high resolution (600 dpi) and A0 format using a large-format scanning device HD Ultra X Series (36'', 42'')/HD Ultra X ScanStation.  
 
-The images were then converted into bitmap 0/1 (white/black) and saved as files in graphical bitmap formats: TIFF, JPG and PNG. Most of the data were stored in TIFF format which present a matrix of 2D arrays of pixels assigned to a value in a gray scale. The files were stored with metadata summarised for our paper which is in progress of \emph{Scientific Reports} journal (planned). The images were stored with a resolution of 300 dpi, ca. 350-400 MB size each, in 256 B/W monochrome scales. We also performed visual data analysis and inspection: the records from the Galitzine seismometer are monochrome, while those of Wiecherts are in colour (ivory background). The dataset included 145 images of the analogue seismograms in a raster format. 
+The images were then converted into bitmap 0/1 (white/black) and saved as files in graphical bitmap formats: TIFF, JPG and PNG. Most of the data were stored in TIFF format which present a matrix of 2D arrays of pixels assigned to a value in a gray scale. The files were stored with metadata summarised for our paper which is in progress of \emph{Scientific Reports} journal (planned). The images were stored with a resolution of 300 dpi, ca. 350-400 MB size each, in 256 B/W monochrome scales. We also performed visual data analysis and inspection: the records from the Galitzine seismometer are monochrome, while those of Wiecherts are colour (ivory background). The dataset included 145 images of the analogue seismograms in a raster format. 
  
  \subsubsection{Data management and organisation}
-During December 2021 and January 2022 we performed data processing in the Cytomine workspace and editing system for interactive data storage and management. The files were uploaded in Cytomine (\href{https://cytomine.com/}{Cytomine}). 
 
 \begin{figure}[H] 
 	\begin{subfigure}{0.48\textwidth}
@@ -309,7 +309,7 @@ During December 2021 and January 2022 we performed data processing in the Cytomi
 \caption{Examples of the annotation classes, distortions on the image and classified time marks.} \label{fig:03}
 \end{figure}
 
-In Cytomine we kept and processed images using following steps: organising and navigating the data, adding metadata and annotations, visualising and analysing the images, basic image manipulations (rapid view, zooming and rotating). Technical details of the seismograms were recored in metadata and included information regarding the resolution, size, perimeter and area in pixels. As a workspace, Cytomine provides storage place for a large dataset. We uploaded and organised 145 files, each ca. 300-400 MB of size. 
+During December 2021 and January 2022 we performed data processing in the Cytomine workspace and editing system for interactive data storage and management. The files were uploaded in Cytomine (\href{https://cytomine.com/}{Cytomine}). In Cytomine we kept and processed images using following steps: organising and navigating the data, adding metadata and annotations, visualising and analysing the images, basic image manipulations (rapid view, zooming and rotating). Technical details of the seismograms were recored in metadata and included information regarding the resolution, size, perimeter and area in pixels. As a workspace, Cytomine provides storage place for a large dataset. We uploaded and organised 145 files, each ca. 300-400 MB of size. 
 
 \subsection{Progress}
 During the \nth{1} thesis year (2021/2022) we developed and tested the original programming code to fully automate vectorisation of the scanned old seismograms. To this end, we used Python language for generating algorithm of image processing and ML techniques for discrimination of seismic trace. To test this code, we used archived dataset obtained from the Royal Observatory of Belgium, Uccle seismic station, scanned as high‐resolution images (over 100 high-resolution files). These seismograms were recorded by the Galitzine seismograph in 1954. 
