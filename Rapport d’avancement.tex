@@ -83,7 +83,9 @@
 \color{darkblue}
 \large{\textbf{Rapport d’avancement de la thèse de doctorat \\ by Polina LEMENKOVA}} \\
 \color{black}
-\large{1ère année de thèse (ann\'{e}e acad\'{e}mique 2021-2022) \\\emph{Doctorat en Sciences de l'ing\'{e}nieur et technologie}}
+\large{1ère année de thèse (ann\'{e}e acad\'{e}mique 2021-2022) \\\emph{Doctorat en Sciences de l'ing\'{e}nieur et technologie}}\\
+Fait le 26 juillet 2022.
+
  
 \vspace{2cm}
 
@@ -350,7 +352,7 @@ To optimise the data processing and to avoid empty spaces on the edges of the pa
 \caption{Defining the ROI on various seismograms. The mask only included the ROI between the red dashed lines. The histograms show the distribution of pixels with values excluded from the ROI} \label{fig:04}
 \end{figure}
 
-The boolean array of inliers was defined using masking: $inlier\_mask = ransac.inlier\_mask\_$ and $outlier\_mask = np.logical\_not(inlier\_mask)$. The search for the closest segment in the sequence of tiles on a seismogram was always starting to the right (new next minute), then the next minutes. Accordingly, the search for the closest segment was starting to the left (minute 0 of the hour) then the previous minutes. In such a way, the algorithm propagated along a line of the seismogram, searching for every consecutive minute iteratively. Minute marks and hour gaps were evenly spaced within an interval of time covering each seismogram using NumPy as follows: $line_X = np.arange(x\_hours.min(), x\_hours.max())[:, np.newaxis]$. For vertically-oriented images the rotation was done using numpy.transpose module of NumPy which enables to reverse the axes of an array of pixels.
+The boolean array of inliers was defined by mask: $inlier\_mask = ransac.inlier\_mask\_$ and $outlier\_mask = np.logical\_not(inlier\_mask)$. The search for the closest segment in the sequence of tiles on a seismogram was always starting to the right (new next minute), then the next minutes. Accordingly, the search for the closest segment was starting to the left (minute 0 of the hour) then the previous minutes. In such a way, the algorithm propagated along a line of the seismogram, searching for every consecutive minute iteratively. Minute marks and hour gaps were evenly spaced within an interval of time covering each seismogram using NumPy as follows: $line_X = np.arange(x\_hours.min(), x\_hours.max())[:, np.newaxis]$. For vertically-oriented images the rotation was done using numpy.transpose module of NumPy which enables to reverse the axes of an array of pixels.
 
 The detection of the ROI was performed using thresholding which separated the main part on the image with meaningful data from the ignored part that contains noise. Thresholding partitioned the image using pixels' values of colour intensity. The iterative algorithms separated the image into the two parts and divided all the pixels into the two groups: with colour intensity above and below the threshold. Fig. \ref{fig:04} illustrates the process. It shows the seismogram (left) and its enlarged fragment of the selected region with vectorised traces (right). The bottom row of the figure presents histograms used for detecting ROI by thresholding. 
 
@@ -408,10 +410,14 @@ Each image contained 180 tiles which were processed individually. Selecting the 
 \caption{Hour gaps detected using the repeatability pattern of gaps (double small gaps, closely located next to the first minute of the hour). Noise background is ignored while trace minute segments are clearly visible} \label{fig:06}
 \end{figure}
 
-The edges of seismic traces (start and end points) were detected according to the structure of seismogram: minute and hour time gaps made by the drum of the seismometer which signify the ends of the line segments. Each tile on the image was digitised individually. This resulted in digitised segments visualised as vector lines on the seismograms. The interpretation of the straight or slightly curved lines performed well, while overlapping of lines required attention when defining the parameters for automatic line detection. The overlap cases existed between the two neighbour tiles with an overlap defined as 1.1\% of minute. In these cases the border traces were digitised twice. The correction of such cases was done semi-automatically by checking the border regions and ignoring the overlapped vector segments in neighbouring tiles. Each image contained 180 tiles processed individually during 10 seconds for each tile. The total time processing for one seismogram is ca. 30 minutes, which demonstrates a high time efficiency of the proposed algorithm. The algorithm was tested initially on a single image processed as a complete workflow and then applied for the dataset. 
+The edges of seismic traces (start and end points) were detected according to the structure of seismogram: minute and hour time gaps made by the drum of the seismometer which signify the ends of the line segments. Each tile on the image was digitised individually. This resulted in digitised segments visualised as vectors on seismograms. The interpretation of the straight or slightly curved lines performed well, while overlapping of lines required attention when defining the parameters for automatic line detection. The overlap cases existed between the two neighbour tiles, defined as 1.1\% of minute. In these cases, border traces were digitised twice. 
+
+The correction of such cases was done semi-automatically by checking the border regions and ignoring the overlapped vector segments in neighbouring tiles. Each image contained 180 tiles processed individually during 10 seconds for each tile. The total time processing for one seismogram is ca. 30 minutes, which demonstrates a high time efficiency of the proposed algorithm. The algorithm was tested initially on a single image processed as a complete workflow and then applied for the dataset. 
 
 \subsection{Line approximation and vectorisation}
-The lines were interpolated as several short segments of splines, separated by the minute gaps between each segment and vecrorised. The interpretation of the image on the pixel-based level is made by the machine algorithm of Python \cite{van1995python}, which assesses the curvature and colour of he pixels. The decision in pixel grouping is made using features of these pixels that match the target classes ('line'/'not line'): colour, distance to the threshold in pixels, angle of line direction, etc). The shape of the line as a vector geometric structure is recognised and identified by the machine vision, based on the assessment of the connectivity of pixels constituting the line, expect for the time gaps and marks breaking the trace in case of seismograms. The aim of the vectorisation algorithm is to transform the original raster pixels representing the line into a vector object with the centralised skeleton. The tested seismogram has been extracted from the original raster image with a coarse resolution. The vectorisation was done by tiles and resulted in the sequence of vector traces (minute segments). Complex cases in vectorising process included overlap of lines, double vectorisation of the same line located on the border between the two tiles because of the different paths to this line.
+The lines were interpolated as several short segments of splines, separated by the minute gaps between each segment and vecrorised. The interpretation of the image on the pixel-based level is made by the machine algorithm of Python \cite{van1995python}, which assesses the curvature and colour of he pixels. The decision in pixel grouping is made using features of these pixels that match the target classes ('line'/'not line'): colour, distance to the threshold in pixels, angle of line direction, etc). The shape of the line as a vector geometric structure is recognised and identified by the machine vision, based on the assessment of the connectivity of pixels constituting the line, expect for the time gaps and marks breaking the trace in case of seismograms. 
+
+The aim of the vectorisation algorithm is to transform the original raster pixels representing the line into a vector object with the centralised skeleton. The tested seismogram has been extracted from the original raster image with a coarse resolution. The vectorisation was done by tiles and resulted in the sequence of vector traces (minute segments). Complex cases in vectorising process included overlap of lines, double vectorisation of the same line located on the border between the two tiles because of the different paths to this line.
 
 \subsection{Creating buffer zones for line tracking}
 The algorithm identified trace segments and time intervals breaking the lines using buffer zones, Fig. \ref{fig:07sr}. Detecting timing gap intervals through buffering was done around hour and minute marks. The features of the objects were defined used to train the classifiers to discriminate segments of seismic lines on the images. This process was based on the colours properties of pixels which were used to identify buffers for time gaps (break of dark line and light colour of the background).
@@ -509,20 +515,38 @@ During the \nth{1} thesis year (2021/2022) I processed large dataset of seismogr
 
 \subsection{Examples of vectorised seismograms}\label{app2}
 \begin{figure}[H] 
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=9cm]{obspy_1.png}
+		\caption{traces\_UCC19540224Gal\_E\_0800.mseed}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=9cm]{obspy_2.png}
+		\caption{traces\_UCC19540310Gal\_N\_0907.mseed}
+	\end{subfigure}
+\medskip
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=9cm]{obspy_3.png}
+		\caption{traces\_UCC19540212Gal\_E\_0758.mseed}
+	\end{subfigure}\hspace*{\fill}
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=9cm]{obspy_4.png}
+		\caption{traces\_UCC19540303Gal\_N\_0833.mseed}
+	\end{subfigure}
+\medskip
+	\begin{subfigure}{0.45\textwidth}
 		\includegraphics[width=9cm]{obspy_5.png}
 		\caption{traces\_UCC19540205Gal\_N\_0742.mseed}
 	\end{subfigure}\hspace*{\fill}
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\includegraphics[width=9cm]{obspy_6.png}
 		\caption{traces\_UCC19540203Gal\_N\_0821.mseed}
 	\end{subfigure}
 \medskip
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\includegraphics[width=9cm]{obspy_7.png}
 		\caption{traces\_UCC19540302Gal\_E\_0805.mseed}
 	\end{subfigure}\hspace*{\fill}
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\includegraphics[width=9cm]{obspy_8.png}
 		\caption{traces\_UCC19540309Gal\_E\_0817.mseed}
 	\end{subfigure}
@@ -546,7 +570,6 @@ High vectorising precision is achieved due to the theoretical approach of algori
 \begin{itemize}
 	\item Modules ECTS de formation du Programme de doctorat en sciences de l'ingénieur ULB: 5 ECTS for the Course LANG-B909, 60 h, niveau AVANC\'{E} 2, B2.2.
 	\item Assistant of supervision of MSc thesis \emph{Exploitation of EQTransformer and application to Belgian seismic data}, by Alexandre Missenard.
-	\item Active reviewer of journal manuscripts (domains: Earth sciences and Engineering): \href{https://publons.com/researcher/1587436/polina-lemenkova/}{Publons R-8828-2018}
 \end{itemize}
 
 \section{Publications}
